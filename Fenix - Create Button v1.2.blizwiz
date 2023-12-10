@@ -144,6 +144,10 @@
             <condition input="ButtonIcon" empty="0"/>
             <value>^ButtonIcon^</value>
         </field>
+        <field id="AlertIcon">
+            <condition input="ButtonIcon" empty="0"/>
+            <value>^ButtonIcon^</value>
+        </field>
         <!--Indirect way of setting the hotkey using ChargeText to add a text entry to the default hotkey link and then reset the field to empty, the hotkey will stay linked to the text entry-->
         <field id="EditorPrefix">
             <condition input="ButtonHotkey" empty="0"/>
