@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wizardfile>
 <wizard id="FenixCreateButton">
-    <name>Fenix - Create Button v1.1</name>
+    <name>Fenix - Create Button v1.2</name>
     <objecttypes create="Button"/>
    
 <!--Inputs-->
@@ -115,7 +115,19 @@
         <name>Write Button tooltip</name>
         <tooltip>The Button tooltip is the text shown when you mouse over the button in the command card.</tooltip>
     </input>
-
+	<input id="CheckPrefix" type="WizardCheckbox">
+		<name>Check if you want to add Prefix/Suffix</name>
+	</input>
+	<input id="Prefix" type="CString">
+		<condition input="CheckPrefix" value="1"/>
+        <name>Prefix for your requirements</name>
+        <tooltip>This is just for the editor</tooltip>
+    </input>
+	<input id="Suffix" type="CString">
+		<condition input="CheckPrefix" value="1"/>
+        <name>Suffix for your requirements</name>
+        <tooltip>This is just for the editor</tooltip>
+    </input>
 
 <!--Entries-->
     <entry catalog="Button" type="CButton">
@@ -143,10 +155,29 @@
             <stringid>Button/EditorPrefix/##id##</stringid>
             <value></value>
         </field>
+
         <field id="Tooltip">
             <condition input="ButtonTooltip" empty="0"/>
             <stringid>Button/Tooltip/^ButtonID^</stringid>
             <value>^ButtonTooltip^</value>
+        </field>
+
+        <!--At the end set the Prefix/Suffix-->
+        <field id="EditorPrefix">
+			<condition logic="and">
+				<condition input="Prefix" empty="0"/>
+				<condition input="CheckPrefix" value="1"/>
+			</condition>			
+            <stringid>Button/EditorPrefix/^ButtonID^</stringid>
+            <value>^Prefix^</value>
+        </field>
+        <field id="EditorSuffix">
+			<condition logic="and">
+				<condition input="Suffix" empty="0"/>
+				<condition input="CheckPrefix" value="1"/>
+			</condition>	
+            <stringid>Button/EditorSuffix/^ButtonID^</stringid>
+            <value>^Suffix^</value>
         </field>
     </entry>
 
