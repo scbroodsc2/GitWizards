@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wizard id="FenixRequirement">
+    <name>Fenix - Requirement v1.0</name>
+    <objecttypes create="Requirement" load="Upgrade"/>
+
+
+<!--CONDITIONS-->
+	<condition id="LearnOnly" input="Choice" value="Learn"/>
+	<condition id="UseOnly" input="Choice" value="Use"/>
+	<condition id="LearnAndUse" input="Choice" value="LearnAndUse"/>
+	<condition id="Have" input="Choice" value="Have"/>
+
+	<condition id="LearnOnlyOrLearnAndUse" logic="or">
+		<condition id="LearnOnly"/>
+		<condition id="LearnAndUse"/>
+	</condition>
+	<condition id="UseOnlyOrLearnAndUse" logic="or">
+		<condition id="UseOnly"/>
+		<condition id="LearnAndUse"/>
+	</condition>
+
+	<condition id="LearnOnlyOrLearnAndUseAndUpgID" logic="and">
+		<condition input="UpgID" empty="0"/>
+		<condition logic="or">
+			<condition id="LearnOnly"/>
+			<condition id="LearnAndUse"/>
+		</condition>
+	</condition>
+
+	<condition id="HaveUnitCount" logic="and">
+		<condition input="Choice" value="Have"/>
+		<condition input="HaveChoice" value="Unit"/>
+	</condition>
+	<condition id="HaveUpgradeCount" logic="and">
+		<condition input="Choice" value="Have"/>
+		<condition input="HaveChoice" value="Upgrade"/>
+	</condition>
+
+	<condition id="ContainResearch" input="Ability" match="contain" value="Research"/> <!--Checks if the word "Research" is somewhere in the input-->
+	<condition id="ResearchEmpty" input="Ability" empty="1"/>
+	<condition id="ResearchValid"> <!--Checks that when you pick a research ability, that it actually is a "research"-->
+		<condition logic="or">
+			<condition id="ContainResearch"/>
+			<condition id="ResearchEmpty"/>	
+		</condition>
+	</condition>
+
+<!--VALIDATION-->
+	<!--Validates that "Ability" picked must be with Research in the name-->
+    <validate type="Error">
+		<condition id="ResearchValid"/>
+        <text>Requires a "Research ability" (Ability with Research in the name)</text>
+	</validate>
+
+	<validate type="Error">
+		<condition input="Name" empty="0"/>
+		<text>Name and ID for the requirement must not be empty</text>
+	</validate>
+
+
+
+
+<!--INPUTS-->
+	<input id="Instruction0" type="WizardText">
+		<default value="You can select an upgrade in the data editor and use Load -> ThisWizard to auto-load fields based on the upgrade"/>
+		<color value="255,0,76,153"/>
+	</input>
+	<input id="Instruction1" type="WizardText">
+		<default value="Note: If the Upgrade or ability button you are modifying already have a requirement, this wizard will replace it! Read Tooltips!"/>
+		<color value="255,255,0,0"/>
+	</input>
+	<input id="Choice" type="WizardRadio">
+		<name>Create requirement(s) for:</name>
+		<item text="Learn" value="Learn"/>
+		<item text="Use" value="Use"/>
+		<item text="Learn and Use" value="LearnAndUse"/>
+		<item text="Have" value="Have"/>
+		<default value="Learn"/>
+		<layout minheight="60"/>
+		<tooltip>For Learn: It will create a Learn requirement for the upgrade, making it hide after being researched.
+
+For Use: It will create a Use requirement. It is necessairy for Target/Instant abilities that need to have an upgrade done to be unlocked, like stimpack.
+
+For Learn and Use: Will do both of the above.
+
+For Have: Will create a Have requirement. It counts the unit or upgrade. It is usefull to create requirement such as having a certain structure to be able to research an upgrade, or for a unit to benefit a passive upgrade like Metabolic Boost.</tooltip>
+	</input>
+	<input id="HaveChoice" type="WizardRadio">
+		<name>Create Have requirement to count:</name>
+		<condition input="Choice" value="Have"/>
+		<item text="Unit" value="Unit"/>
+		<item text="Upgrade" value="Upgrade"/>
+		<default value="Unit"/>
+	</input>
+
+    <input id="Name" type="CString">
+        <name>(Required) Name and ID for your requirements</name>
+        <tooltip>This will be necessairy for retreiving it when you will want to add it to the ability.
+
+This will create the "Learn NAME", "Use NAME" or "Have NAME" requirements.
+
+Good suggestion of naming is generaly the name of the upgrade or ability or unit that you count.</tooltip>
+        <loadvalue>^LOADID^</loadvalue>
+        <simpletext/>
+    </input>
+
+    <input id="UpgID" type="CUpgradeLink">
+        <name>The Upgrade it will count</name>
+		<condition logic="or">
+			<condition input="Choice" value="Learn"/>
+			<condition input="Choice" value="Use"/>
+			<condition input="Choice" value="LearnAndUse"/>
+			<condition logic="and">
+				<condition input="Choice" value="Have"/>
+				<condition input="HaveChoice" value="Upgrade"/>
+			</condition>
+		</condition>
+        <tooltip>For Learn: This will hide the button after you buy it.
+For Use: This upgrade will need to be researched to be able to use the ability.
+For Have: This will create a Have this upgrade researched requirement.</tooltip>
+        <loadvalue>^LOADID^</loadvalue>
+    </input>
+
+    <input id="HaveUnit" type="CUnitLink">
+        <name>The Unit it will count</name>
+		<condition logic="and">
+			<condition input="Choice" value="Have"/>
+			<condition input="HaveChoice" value="Unit"/>
+		</condition>
+        <tooltip>For Learn: This will hide the button after you buy it.
+For Use: This upgrade will need to be researched to be able to use the ability.
+For Have: This will create a Have this upgrade researched requirement.</tooltip>
+        <loadvalue>^LOADID^</loadvalue>
+    </input>
+
+	<input id="InstructionLearnReq" type="WizardText">
+		<condition id="LearnOnlyOrLearnAndUse"/>
+		<default value="Set the Learn Requirement for the upgrade in research ability"/>
+		<color value="255,0,76,153"/>
+	</input>
+
+
+
+	<input id="Ability" type="CAbilLink"> <!--Will add the learn requirement for the upgrade to this ability-->
+		<condition id="LearnOnlyOrLearnAndUse"/>
+		<name>(Required) Choose the RESEARCH ability to add the Learn requirement for the upgrade.</name>
+		<tooltip>The upgrade must be within the Research ability. It will modify the command wherever it is in the research array.
+		
+For example, Metabolic boost is within the Spawning Pool Research ability. Here you want to pick the research ability that the upgrade is within.</tooltip>
+	</input>
+
+    <input id="LearnUse" type="CRequirementLink">
+		<condition id="LearnOnlyOrLearnAndUse"/>
+        <name>Optionnal: Set USE node</name>
+        <tooltip>This will greys out the button if not met. The requirement picked must have a "Use" node like all "Have XXXX" requirements. If the picked requirement does not have a USE node, nothing will be added.</tooltip>
+		<layout minheight="60"/>
+	</input>
+
+
+	<input id="InstructionUseReq" type="WizardText">
+		<condition id="UseOnlyOrLearnAndUse"/>
+		<default value="Set the Use Requirement for the target/instant ability"/>
+		<color value="255,0,76,153"/>
+	</input>
+
+	<input id="AddReqToAbil" type="CAbilLink">
+		<condition id="UseOnlyOrLearnAndUse"/>
+		<name>Choose the Target/Instant ability to add the Use requirement.</name>
+		<tooltip>For example Stimpack is an instant, and Snipe is a Target. 
+
+NOTE: If the ability already have a requirement, this will replace it. For example if you pick Stimpack and a random upgrade, Stimpack will now require that new upgrade to be researched.</tooltip>
+	</input>
+	<input id="AddTo" type="WizardRadio">
+		<condition id="UseOnlyOrLearnAndUse"/>
+		<name>Choose if the Ability Button will be greyed or hidden until you buy the upgrade</name>
+		<tooltip>This will determine if the button to use the ability is greyed or hidden until you buy the upgrade. It will add the required Use or Show nodes to the requirement.</tooltip>
+		<item text="Greyed" value="0"/>
+		<item text="Hidden" value="1"/>
+		<default value="0"/>
+		<layout minheight="60"/>
+	</input>
+
+
+
+	<input id="CheckPrefix" type="WizardCheckbox">
+		<name>Check if you want to add Prefix/Suffix</name>
+	</input>
+	<input id="Prefix" type="CString">
+		<condition input="CheckPrefix" value="1"/>
+        <name>Prefix for your requirements</name>
+        <tooltip>This is just for the editor</tooltip>
+    </input>
+	<input id="Suffix" type="CString">
+		<condition input="CheckPrefix" value="1"/>
+        <name>Suffix for your requirements</name>
+        <tooltip>This is just for the editor</tooltip>
+    </input>
+
+<!--ENTRIES-->
+
+<!--Create the LEARN requirement to hide the button when MaxLevel is reached-->  
+	<macro id="MaxLevel">ref=Upgrade,^UpgID^,MaxLevel</macro>
+	<macro id="MaxLevelMinusOne">^MaxLevel^-1</macro>
+	<!--Node index 0 for Use, 1 for Show-->
+	<entry catalog="Requirement" type="CRequirement">
+		<id>Learn^Name^</id>
+		<condition id="LearnOnlyOrLearnAndUse"/>
+		<field id="Name">
+			<value>Learn ^Name^</value>
+		</field>
+		<field id="EditorCategories">
+			<value>TechType:Upgrade</value>
+		</field>
+        <field id="EditorPrefix">
+			<condition logic="and">
+				<condition input="Prefix" empty="0"/>
+				<condition input="CheckPrefix" value="1"/>
+			</condition>			
+            <stringid>Requirement/EditorPrefix/Learn^Name^</stringid>
+            <value>^Prefix^</value>
+        </field>
+        <field id="EditorSuffix">
+			<condition logic="and">
+				<condition input="Suffix" empty="0"/>
+				<condition input="CheckPrefix" value="1"/>
+			</condition>	
+            <stringid>Requirement/EditorSuffix/Learn^Name^</stringid>
+            <value>^Suffix^</value>
+        </field>
+		<field id="NodeArray_Link"> <!--Adds the Use Requirement -->
+			<index>0</index>
+			<condition input="LearnUse" empty="0"/>
+			<value>ref=Requirement,^LearnUse^,NodeArray[0].Link</value>
+		</field>
+		<field id="NodeArray_Link"> <!--Adds the Show Requirement-->
+			<index>1</index>
+			<condition id="LearnOnlyOrLearnAndUseAndUpgID"/>
+			<value>LTCountUpgrade^UpgID^QueuedOrBetter^MaxLevelMinusOne^</value>
+		</field>
+	</entry>
+
+	<!--Create the necessairy Nodes for the LEARN requirement-->
+	<entry catalog="RequirementNode" type="CRequirementCountUpgrade">
+		<id>CountUpgrade^UpgID^QueuedOrBetter</id>
+		<condition id="LearnOnlyOrLearnAndUseAndUpgID"/>
+		<name>CountUpgrade^UpgID^QueuedOrBetter</name>
+		<field id="Count_State">
+			<value>QueuedOrBetter</value>
+		</field>
+		<field id="Count_Link">
+			<value>^UpgID^</value>
+		</field>
+		<allowmodify/>
+	</entry>
+	<entry catalog="RequirementNode" type="CRequirementLTE">
+		<id>LTCountUpgrade^UpgID^QueuedOrBetter^MaxLevelMinusOne^</id>
+		<condition id="LearnOnlyOrLearnAndUseAndUpgID"/>
+		<name>LTCountUpgrade^UpgID^QueuedOrBetter^MaxLevelMinusOne^</name>
+		<field id="OperandArray">
+			<index>0</index>
+			<value>CountUpgrade^UpgID^QueuedOrBetter</value>
+		</field>
+		<field id="OperandArray">
+			<index>1</index>
+			<value>^MaxLevelMinusOne^</value>
+		</field>
+		<allowmodify/>
+	</entry>
+
+
+<!--Create the USE requirement to hide the button when MaxLevel is reached-->   
+	<!--Node index 0 for Use, 1 for Show-->
+	<entry catalog="Requirement" type="CRequirement">
+		<id>Use^Name^</id>
+		<condition id="UseOnlyOrLearnAndUse"/>
+		<field id="Name">
+			<value>Use ^Name^</value>
+		</field>
+        <field id="EditorPrefix">
+			<condition logic="and">
+				<condition input="Prefix" empty="0"/>
+				<condition input="CheckPrefix" value="1"/>
+			</condition>
+            <stringid>Requirement/EditorPrefix/Use^Name^</stringid>
+            <value>^Prefix^</value>
+        </field>
+        <field id="EditorSuffix">
+			<condition logic="and">
+				<condition input="Suffix" empty="0"/>
+				<condition input="CheckPrefix" value="1"/>
+			</condition>
+            <stringid>Requirement/EditorSuffix/Use^Name^</stringid>
+            <value>^Suffix^</value>
+        </field>
+		<field id="EditorCategories">
+			<value>TechType:Ability</value>
+		</field>
+		<field id="NodeArray_Link"> <!--Adds the Use Requirement-->
+			<index>^AddTo^</index>
+			<value>CountUpgrade^UpgID^CompleteOnly</value>
+		</field>
+	</entry>
+
+	<entry catalog="RequirementNode" type="CRequirementCountUpgrade">
+		<id>CountUpgrade^UpgID^CompleteOnly</id>
+		<condition id="UseOnlyOrLearnAndUse"/>
+		<name>CountUpgrade^UpgID^CompleteOnly</name>
+		<field id="Count_Link">
+			<value>^UpgID^</value>
+		</field>
+		<field id="Count_State">
+			<index>1</index>
+			<value>CompleteOnly</value>
+		</field>
+		<allowmodify/>
+	</entry>
+
+
+<!--Add the USE requirement to Effect Instant and Effect Target abilities if it's created-->
+	<entry catalog="Abil" type="CAbil">
+		<condition logic="and">
+			<condition input="AddReqToAbil" empty="0"/>
+			<condition id="UseOnlyOrLearnAndUse"/>
+		</condition>
+		<id>^AddReqToAbil^</id>
+		<allowmodify/>
+		<field id="CmdButtonArray_Requirements">
+			<index>0</index>
+			<value>Use^Name^</value>
+		</field>
+	</entry>
+
+<!--Add the requirement to the upgrade within the research ability.-->
+<!--Upgrade at that array-->
+<macro id="Upg0">ref=Abil,^Ability^,InfoArray[0].Upgrade</macro>
+<macro id="Upg1">ref=Abil,^Ability^,InfoArray[1].Upgrade</macro>
+<macro id="Upg2">ref=Abil,^Ability^,InfoArray[2].Upgrade</macro>
+<macro id="Upg3">ref=Abil,^Ability^,InfoArray[3].Upgrade</macro>
+<macro id="Upg4">ref=Abil,^Ability^,InfoArray[4].Upgrade</macro>
+<macro id="Upg5">ref=Abil,^Ability^,InfoArray[5].Upgrade</macro>
+<macro id="Upg6">ref=Abil,^Ability^,InfoArray[6].Upgrade</macro>
+<macro id="Upg7">ref=Abil,^Ability^,InfoArray[7].Upgrade</macro>
+<macro id="Upg8">ref=Abil,^Ability^,InfoArray[8].Upgrade</macro>
+<macro id="Upg9">ref=Abil,^Ability^,InfoArray[9].Upgrade</macro>
+<macro id="Upg10">ref=Abil,^Ability^,InfoArray[10].Upgrade</macro>
+<macro id="Upg11">ref=Abil,^Ability^,InfoArray[11].Upgrade</macro>
+<macro id="Upg12">ref=Abil,^Ability^,InfoArray[12].Upgrade</macro>
+<macro id="Upg13">ref=Abil,^Ability^,InfoArray[13].Upgrade</macro>
+<macro id="Upg14">ref=Abil,^Ability^,InfoArray[14].Upgrade</macro>
+<macro id="Upg15">ref=Abil,^Ability^,InfoArray[15].Upgrade</macro>
+<macro id="Upg16">ref=Abil,^Ability^,InfoArray[16].Upgrade</macro>
+<macro id="Upg17">ref=Abil,^Ability^,InfoArray[17].Upgrade</macro>
+<macro id="Upg18">ref=Abil,^Ability^,InfoArray[18].Upgrade</macro>
+<macro id="Upg19">ref=Abil,^Ability^,InfoArray[19].Upgrade</macro>
+<macro id="Upg20">ref=Abil,^Ability^,InfoArray[20].Upgrade</macro>
+<macro id="Upg21">ref=Abil,^Ability^,InfoArray[21].Upgrade</macro>
+<macro id="Upg22">ref=Abil,^Ability^,InfoArray[22].Upgrade</macro>
+<macro id="Upg23">ref=Abil,^Ability^,InfoArray[23].Upgrade</macro>
+<macro id="Upg24">ref=Abil,^Ability^,InfoArray[24].Upgrade</macro>
+<macro id="Upg25">ref=Abil,^Ability^,InfoArray[25].Upgrade</macro>
+<macro id="Upg26">ref=Abil,^Ability^,InfoArray[26].Upgrade</macro>
+<macro id="Upg27">ref=Abil,^Ability^,InfoArray[27].Upgrade</macro>
+<macro id="Upg28">ref=Abil,^Ability^,InfoArray[28].Upgrade</macro>
+<macro id="Upg29">ref=Abil,^Ability^,InfoArray[29].Upgrade</macro>
+
+<entry catalog="Abil" type="CAbil">
+		<id>^Ability^</id>
+		<allowmodify/>
+		<condition id="LearnOnlyOrLearnAndUse"/>
+		<field id="InfoArray_Button_Requirements"><index>0</index><condition input="UpgID" value="^Upg0^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>1</index><condition input="UpgID" value="^Upg1^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>2</index><condition input="UpgID" value="^Upg2^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>3</index><condition input="UpgID" value="^Upg3^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>4</index><condition input="UpgID" value="^Upg4^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>5</index><condition input="UpgID" value="^Upg5^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>6</index><condition input="UpgID" value="^Upg6^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>7</index><condition input="UpgID" value="^Upg7^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>8</index><condition input="UpgID" value="^Upg8^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>9</index><condition input="UpgID" value="^Upg9^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>10</index><condition input="UpgID" value="^Upg10^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>11</index><condition input="UpgID" value="^Upg11^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>12</index><condition input="UpgID" value="^Upg12^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>13</index><condition input="UpgID" value="^Upg13^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>14</index><condition input="UpgID" value="^Upg14^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>15</index><condition input="UpgID" value="^Upg15^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>16</index><condition input="UpgID" value="^Upg16^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>17</index><condition input="UpgID" value="^Upg17^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>18</index><condition input="UpgID" value="^Upg18^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>19</index><condition input="UpgID" value="^Upg19^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>20</index><condition input="UpgID" value="^Upg20^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>21</index><condition input="UpgID" value="^Upg21^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>22</index><condition input="UpgID" value="^Upg22^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>23</index><condition input="UpgID" value="^Upg23^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>24</index><condition input="UpgID" value="^Upg24^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>25</index><condition input="UpgID" value="^Upg25^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>26</index><condition input="UpgID" value="^Upg26^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>27</index><condition input="UpgID" value="^Upg27^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>28</index><condition input="UpgID" value="^Upg28^"/><value>Learn^Name^</value></field>
+		<field id="InfoArray_Button_Requirements"><index>29</index><condition input="UpgID" value="^Upg29^"/><value>Learn^Name^</value></field>
+</entry>
+
+<!--HAVE Upgrade Choice-->
+	<entry catalog="Requirement" type="CRequirement">
+		<id>Have^Name^</id>
+		<condition id="HaveUpgradeCount"/>
+		<field id="Name">
+			<value>Have ^Name^</value>
+		</field>
+        <field id="EditorPrefix">
+			<condition logic="and">
+				<condition input="Prefix" empty="0"/>
+				<condition input="CheckPrefix" value="1"/>
+			</condition>
+            <stringid>Requirement/EditorPrefix/Use^Name^</stringid>
+            <value>^Prefix^</value>
+        </field>
+        <field id="EditorSuffix">
+			<condition logic="and">
+				<condition input="Suffix" empty="0"/>
+				<condition input="CheckPrefix" value="1"/>
+			</condition>
+            <stringid>Requirement/EditorSuffix/Use^Name^</stringid>
+            <value>^Suffix^</value>
+        </field>
+		<field id="NodeArray_Link"> <!--Adds the Use Requirement-->
+			<index>0</index>
+			<value>CountUpgrade^UpgID^CompleteOnly</value>
+		</field>
+	</entry>
+
+	<entry catalog="RequirementNode" type="CRequirementCountUpgrade">
+		<id>CountUpgrade^UpgID^CompleteOnly</id>
+		<condition id="HaveUpgradeCount"/>
+		<name>CountUpgrade^UpgID^CompleteOnly</name>
+		<field id="Count_Link">
+			<value>^UpgID^</value>
+		</field>
+		<field id="Count_State">
+			<index>1</index>
+			<value>CompleteOnly</value>
+		</field>
+		<allowmodify/>
+	</entry>
+<!--HAVE Unit Choice-->
+	<entry catalog="Requirement" type="CRequirement">
+		<id>Have^Name^</id>
+		<condition id="HaveUnitCount"/>
+		<field id="Name">
+			<value>Have ^Name^</value>
+		</field>
+        <field id="EditorPrefix">
+			<condition logic="and">
+				<condition input="Prefix" empty="0"/>
+				<condition input="CheckPrefix" value="1"/>
+			</condition>
+            <stringid>Requirement/EditorPrefix/Use^Name^</stringid>
+            <value>^Prefix^</value>
+        </field>
+        <field id="EditorSuffix">
+			<condition logic="and">
+				<condition input="Suffix" empty="0"/>
+				<condition input="CheckPrefix" value="1"/>
+			</condition>
+            <stringid>Requirement/EditorSuffix/Use^Name^</stringid>
+            <value>^Suffix^</value>
+        </field>
+		<field id="NodeArray_Link"> <!--Adds the Use Requirement-->
+			<index>0</index>
+			<value>CountUnit^HaveUnit^CompleteOnly</value>
+		</field>
+	</entry>
+
+	<entry catalog="RequirementNode" type="CRequirementCountUnit">
+		<id>CountUnit^HaveUnit^CompleteOnly</id>
+		<condition id="HaveUnitCount"/>
+		<name>CountUnit^HaveUnit^CompleteOnly</name>
+		<field id="Count_Link">
+			<value>^HaveUnit^</value>
+		</field>
+		<field id="Count_State">
+			<index>1</index>
+			<value>CompleteOnly</value>
+		</field>
+		<allowmodify/>
+	</entry>
+
+
+
+</wizard>

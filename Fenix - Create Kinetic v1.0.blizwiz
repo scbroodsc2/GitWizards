@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wizardfile>
+<wizard id="FenixCreateKinetic">
+    <name>Fenix - Create Kinetic v1.0</name>
+    <objecttypes create="Behavior;Effect;Kinetic"/>
+
+
+<!--Conditions-->
+    <condition id="KRotate" input="KineticType" value="CKineticRotate"/>
+    <condition id="KTranslate" input="KineticType" value="CKineticTranslate"/>
+    <condition id="KFollow" input="KineticType" value="CKineticFollow"/>
+    <condition id="KDistance" input="KineticType" value="CKineticDistance"/>
+    <condition id="KSet" input="KineticType" value="CKineticSet"/>
+    <condition id="KSequence" input="KineticType" value="CKineticSequence"/>
+    <condition id="BCreate" input="BehaviorCreate" value="1"/>
+    <condition id="EffectCreate" input="AddEffectKinetic" value="1"/>
+
+<!--Inputs-->
+    <input id="Page1Instructions1" type="WizardText">
+        <default value="This Wizard is used for creating the data for Kinetics."/>
+        <color value="255,0,76,153"/>
+    </input>
+    <input id="Page1Instructions1.1" type="WizardText">
+        <default value="You can either create behavior and effect for individual Kinetics,"/>
+        <color value="255,0,76,153"/>
+    </input>
+    <input id="Page1Instructions1.2" type="WizardText">
+        <default value="Or create the different kinetics and use the Set Kinetic."/>
+        <color value="255,0,76,153"/>
+    </input>
+
+    <input id="Page1Instructions2" type="WizardText">
+        <default value="KINETIC SECTION"/>
+        <color value="0,100,0"/>
+    </input>
+    <input id="KineticType" type="WizardRadio">
+        <name>Kinetic Type</name>
+        <tooltip>Rotation: Makes a unit turn around another unit, like helicopter blades.
+Translate: Makes a unit slide in a direction, like on a conveyor.
+Follow: Make the Target follow the caster.
+Distance: Force a specific distance between units, use with Rotation. It prevents the rotating units from going in or out over time.
+Set: Sets multiple Kinetics at once.
+Sequence: Create a sequence of Kinetics to repeat.
+        </tooltip>
+        <item text="Rotate" value="CKineticRotate"/>
+        <item text="Translate" value="CKineticTranslate"/>
+        <item text="Follow" value="CKineticFollow"/>
+        <item text="Distance" value="CKineticDistance"/>
+        <item text="Set" value="CKineticSet"/>
+        <item text="Sequence (NYI)" value="CKineticSequence"/>
+        <default value="CKineticRotate"/>
+    </input>
+    <input id="KineticName" type="CString">
+        <name>Kinetic Name</name>
+    </input>
+    <input id="KineticID" type="CString">
+        <name>Kinetic ID</name>
+        <tooltip>Affects Effect and Behavior IDs too</tooltip>
+        <simpletext/>
+    </input>
+    <input id="KineticDuration" type="real32">
+        <condition id="KRotate"/>
+        <name>360 Rotation Duration</name>
+        <tooltip>How long will it take to do a full 360 degree?</tooltip>
+    </input>
+    <input id="KineticClock" type="WizardRadio">
+        <condition id="KRotate"/>
+        <name>Clockwise or Counter clockwise</name>
+        <item text="Clockwise" value="Clockwise"/>
+        <item text="Counterclock" value="Counterclock"/>
+        <default value="Clockwise"/>
+    </input>
+
+    <input id="KineticDistance" type="real32">
+        <condition id="KDistance"/>
+        <name>Forced Distance between the units</name>
+        <tooltip>Game will keep the units at this distance.</tooltip>
+    </input>
+    <input id="KineticXOffset" type="real32">
+        <condition id="KTranslate"/>
+        <name>X Offset per sec</name>
+        <tooltip>Distance every sec that the unit is pushed on the X coordinate. Value can be positive and negative for different direction.</tooltip>
+    </input>
+    <input id="KineticYOffset" type="real32">
+        <condition id="KTranslate"/>
+        <name>Y Offset per sec</name>
+        <tooltip>Distance every sec that the unit is pushed on the Y coordinate. Value can be positive and negative for different direction.</tooltip>
+    </input>
+
+    <input id="InstructionFollow" type="WizardText">
+        <condition id="KFollow"/>
+        <default value="You only need 1 follow type Kinetic and reuse it."/>
+        <tooltip>Except if you want different Target/Source/Caster.</tooltip>
+        <color value="255,0,0"/>
+    </input>
+
+    <input id="InstructionsSet1" type="WizardText">
+        <condition id="KSet"/>
+        <default value="Using Set, make sure to create the Behavior and Effects for this Set."/>
+        <color value="255,0,0"/>
+    </input>
+    <input id="InstructionsSet2" type="WizardText">
+        <condition id="KSet"/>
+        <default value="Add the Kinetics you want to combine from top to bottom in this list"/>
+        <color value="255,0,0"/>
+    </input>
+    <input id="KineticSet1" type="CKineticLink">
+        <condition id="KSet"/>
+    </input>
+    <input id="KineticSet2" type="CKineticLink">
+        <condition id="KSet"/>
+    </input>
+    <input id="KineticSet3" type="CKineticLink">
+        <condition id="KSet"/>
+    </input>
+    <input id="KineticSet4" type="CKineticLink">
+        <condition id="KSet"/>
+    </input>
+    <input id="KineticSet5" type="CKineticLink">
+        <condition id="KSet"/>
+        <layout minheight="35"/>
+    </input>
+
+    <input id="Spacing1" type="WizardText">
+        <default value=" "/>
+        <color value="255,0,76,153"/>
+    </input>
+
+    <input id="Page1Instructions3" type="WizardText">
+        <default value="BEHAVIOR SECTION"/>
+        <color value="0,100,0"/>
+    </input>
+    <input id="BehaviorCreate" type="WizardCheckbox">
+        <name>Check to create the Behaviors</name>
+        <tooltip>It creates behaviors that Apply/Remove the Kinetic on the unit.</tooltip>
+    </input>
+    <input id="BehaviorHide" type="WizardCheckbox">
+        <name>Check to Hide the behavior on the unit</name>
+        <tooltip>Hide the behavior icon.</tooltip>
+        <condition id="BCreate"/>
+    </input>
+    <input id="BehaviorIcon" type="CImagePath">
+        <condition logic="and">
+            <condition id="BCreate"/>
+            <condition input="BehaviorHide" value="0"/>
+        </condition>
+        <name>Select icon for the Behavior for the Kinetic</name>
+    </input>
+    <input id="BehaviorDuration" type="real32">
+        <condition logic="and">
+            <condition id="BCreate"/>
+            <condition input="BehaviorHide" value="0"/>
+            <condition id="KSet"/>
+        </condition>
+        <name>Behavior Duration</name>
+        <tooltip>How long is the unit affected by the Kinetic? A duration of 0 means it will remain forever until removed externally.
+
+If a duration is set, when the time is over, the behavior is removed along with the Kinetics.
+        </tooltip>
+    </input>
+
+    <input id="Page1Instructions4" type="WizardText">
+        <default value="EFFECT SECTION"/>
+        <color value="0,100,0"/>
+    </input>
+    <input id="AddEffectKinetic" type="WizardCheckbox">
+        <name>Check to add Apply/Remove Effect Kinetic</name>
+    </input>
+
+
+
+<!--Entries-->
+<!--Create the Kinetic-->
+<macro id="ReturnType" replaceSrc="CKinetic" replaceDst="">^KineticType^</macro>
+    <entry catalog="Kinetic" type="^KineticType^">
+        <id>^KineticID^</id>
+        <field id="Name">
+            <condition input="KineticName" empty="0"/>
+            <value>^KineticName^</value>
+        </field>
+        <field id="Name">
+            <condition input="KineticName" empty="1"/>
+            <value>^KineticID^</value>
+        </field>
+        <field id="EditorPrefix">
+            <stringid>Kinetic/EditorPrefix/^KineticID^</stringid>
+            <value>^ReturnType^</value>
+        </field>
+    </entry>
+
+<!--Rotation-->
+    <entry catalog="Kinetic" type="^KineticType^">
+        <id>^KineticID^</id>
+        <allowmodify/>
+        <condition id="KRotate"/>
+        <field id="Yaw"><condition input="KineticClock" value="Clockwise"/>    <value>360</value></field>
+        <field id="Yaw"><condition input="KineticClock" value="Counterclock"/>    <value>-360</value></field>
+        <field id="Duration">   <value>^KineticDuration^</value></field>
+    </entry>
+
+<!--Translate-->
+<entry catalog="Kinetic" type="^KineticType^">
+    <id>^KineticID^</id>
+    <allowmodify/>
+    <condition id="KTranslate"/>
+    <field id="Duration">   <value>1</value></field>
+    <field id="XOffset">    <value>^KineticXOffset^</value></field>
+    <field id="YOffset">    <value>^KineticYOffset^</value></field>
+</entry>
+
+<!--Follow-->
+<entry catalog="Kinetic" type="^KineticType^">
+    <id>^KineticID^</id>
+    <allowmodify/>
+    <condition id="KFollow"/>
+    <field id="Where"> <value>CasterUnit</value></field> <!--ADD OTHER VARIATIONS LATER-->
+</entry>
+
+<!--Distance-->
+<entry catalog="Kinetic" type="^KineticType^">
+    <id>^KineticID^</id>
+    <allowmodify/>
+    <condition id="KDistance"/>
+    <field id="Distance"> <value>^KineticDistance^</value></field>
+</entry>
+
+<!--Set-->
+<entry catalog="Kinetic" type="^KineticType^">
+    <id>^KineticID^</id>
+    <allowmodify/>
+    <condition id="KSet"/>
+    <field id="KineticArray">
+        <condition input="KineticSet1" empty="0"/>
+        <index>0</index>
+        <value>^KineticSet1^</value>
+    </field>
+    <field id="KineticArray">
+        <condition input="KineticSet2" empty="0"/>
+        <index>1</index>
+        <value>^KineticSet2^</value>
+    </field>
+    <field id="KineticArray">
+        <condition input="KineticSet3" empty="0"/>
+        <index>2</index>
+        <value>^KineticSet3^</value>
+    </field>
+    <field id="KineticArray">
+        <condition input="KineticSet4" empty="0"/>
+        <index>3</index>
+        <value>^KineticSet4^</value>
+    </field>
+    <field id="KineticArray">
+        <condition input="KineticSet5" empty="0"/>
+        <index>4</index>
+        <value>^KineticSet5^</value>
+    </field>
+    
+</entry>
+
+<!--Sequence-->
+<entry catalog="Kinetic" type="^KineticType^">
+    <id>^KineticID^</id>
+    <allowmodify/>
+    <condition id="KSequence"/>
+<!--Stuff to be added here-->
+</entry>
+
+
+
+<!--Create the Effects-->
+<entry catalog="Effect" type="CEffectApplyKinetic">
+    <id>Apply^KineticID^</id>
+    <condition id="EffectCreate"/>
+    <field id="Kinetic"><value>^KineticID^</value></field>
+</entry>
+<entry catalog="Effect" type="CEffectRemoveKinetic">
+    <id>Remove^KineticID^</id>
+    <condition id="EffectCreate"/>
+    <field id="KineticLink"><value>^KineticID^</value></field>
+</entry>
+
+<!--Create the Behavior-->
+<entry catalog="Behavior" type="CBehaviorBuff">
+    <id>^KineticID^</id>
+    <condition id="BCreate"/>
+    <name>^KineticName^</name>
+    <field id="Duration"><value>^BehaviorDuration^</value></field>
+    <field id="InitialEffect"><value>Apply^KineticID^</value></field>
+    <field id="FinalEffect"><value>Remove^KineticID^</value></field>
+    <field id="InfoIcon">
+        <condition input="BehaviorHide" value="0"/>
+        <value>^BehaviorIcon^</value>
+    </field>
+    <field id="InfoFlags">
+        <condition input="BehaviorHide" value="1"/>
+        <index>0</index>
+        <value>1</value>
+    </field>
+    <field id="EditorPrefix">
+        <stringid>Behavior/EditorPrefix/^KineticID^</stringid>
+        <value>^ReturnType^</value>
+    </field>
+</entry>
+
+
+
+
+</wizard>
+
+</wizardfile>

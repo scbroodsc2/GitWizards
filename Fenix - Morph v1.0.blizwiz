@@ -1,0 +1,930 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wizard id="FenixMorphUnits">
+    <name>Fenix - Morph Units v1.0</name>
+    <objecttypes create="Actor;Ability;Button"/>
+   
+<!--MACROS-->
+    <macro id="Blue">255,0,76,153</macro> <!--Not working-->
+
+
+<!--CONDITIONS-->
+    <condition id="IsExistingButton" input="AbilityAButton" value="0"/>
+    <condition id="IsCreateButton" input="AbilityAButton" value="1"/>
+    <condition id="IsOneWay" input="MorphType" value="0"/>
+    <condition id="IsTwoWays" input="MorphType" value="1"/>
+    <condition id="IsDisabled" input="Disabled" value="1"/>
+
+    <condition id="IsCreateOneTwo">
+        <condition id="IsCreateButton"/>
+        <condition id="IsTwoWays"/>
+    </condition>
+    <condition id="IsExistingOneTwo">
+        <condition id="IsExistingButton"/>
+        <condition id="IsTwoWays"/>
+    </condition>
+
+<!--VALIDATION-->
+    <validate type="Error">
+        <condition input="UnitA" empty="0"/>
+        <text>Requires a Unit A</text>
+    </validate>
+    <validate type="Error">
+        <condition input="UnitB" empty="0"/>
+        <text>Requires a Unit B</text>
+    </validate>
+
+
+<!--PAGE 1-->
+    <!--Instructions-->
+    <input id="Page1Instructions1" type="WizardText">
+        <default value="This Wizard is used for Morphing a unit into another unit."/>
+        <color value="255,0,76,153"/>
+    </input>
+    <input id="Page1Instructions2" type="WizardText">
+        <default value="Choose the different Morph method and fill the values that appear for your choice."/>
+        <color value="255,0,76,153"/>
+    </input>
+    <input id="Page1Instructions3" type="WizardText">
+        <default value="On page 1, you choose the affected units, create the abilities and buttons."/>
+        <color value="255,0,76,153"/>
+    </input>
+    <input id="Page1Instructions4" type="WizardText">
+        <default value="On page 2, you modify the settings of the abilities."/>
+        <color value="255,0,76,153"/>
+    </input>
+
+    <!--INPUT COLUMN 1-->
+        <input id="MorphType" type="WizardRadio">
+            <name>Choose the morph method (Read tooltip)</name>
+            <tooltip>The "One way" will morph Unit A into Unit B only.
+
+    The "Two ways" will also create data to allow Unit B to morph back to Unit A.
+
+    You could also just run "One way" twice.</tooltip>
+            <item text="One way" value="0"/>
+            <item text="Two ways" value="1"/>
+            <default value="0"/>
+        </input>
+
+        <!--Unit A choice-->
+        <input id="UnitA" type="CUnitLink">
+            <name>Choose the Unit A</name>
+            <tooltip>The first unit will morph into the second unit</tooltip>
+        </input>
+
+        <!--Ability name-->
+        <input id="AbilityNameUnitA" type="CString">
+            <name>Choose Ability A name</name>
+            <tooltip>Choose the name of the morph ability to morph to Unit B. Note: The ID will be UnitA name MorphTo UnitB name.</tooltip>
+        </input>
+
+        <!--Button choice-->
+        <input id="AbilityAButton" type="WizardRadio">
+            <item text="Use existing buttons" value="0"/>
+            <item text="Create new buttons" value="1"/>
+            <default value="0"/>
+            <layout minheight="40"/>
+        </input>
+
+        <!--Existing Button A-->
+        <input id="ExistingButtonA" type="CButtonLink">
+            <condition id="IsExistingButton"/>
+            <name>Choose Button A</name>
+            <layout minheight="50"/>
+        </input>
+
+        <!--Create Button A-->
+        <input id="ButtonAName" type="CString">
+            <condition id="IsCreateButton"/>
+            <name>Button A Name</name>
+            <layout minheight="50"/>
+        </input>
+        <input id="ButtonAIcon" type="CImagePath">
+            <condition id="IsCreateButton"/>
+            <name>Select icon for the Button of ability A</name>
+        </input>
+        <input id="ButtonAHotkey" type="CString">
+            <condition id="IsCreateButton"/>
+            <name>Write one character for setting the hotkey of the Button of ability A</name>
+            <tooltip>Make sure to only write one valid character. If a letter, write in it capital letter.</tooltip>
+        </input>
+        <input id="ButtonATooltip" type="CStringLink">
+            <condition id="IsCreateButton"/>
+            <name>Write button A tooltip</name>
+            <tooltip>The button tooltip is the text shown when you mouse over the button in the command card.</tooltip>
+        </input>
+
+    <!--INPUT COLUMN 2-->
+        <!--IsDisabled dummyInput-->
+        <input id="Disabled" type="WizardCheckbox">
+            <name>Wizard required, don't touch</name>
+            <default value="0"/>
+            <layout column="2"/>
+        </input>
+        <input id="VOffset2" type="WizardText">
+            <layout column="2" minheight="95"/>
+        </input>
+
+        <!--Unit B choice-->
+        <input id="UnitB" type="CUnitLink">
+            <name>Choose the Unit B</name>
+            <tooltip>The first unit will morph into the second unit</tooltip>
+            <layout column="2"/>
+        </input>
+
+        <!--Ability name-->
+        <input id="AbilityNameUnitB" type="CString">
+            <condition id="IsTwoWays"/>
+            <name>Choose Ability B name</name>
+            <tooltip>Choose the name of the morph ability to morph to Unit A. Note: The ID will be UnitB name MorphTo UnitA name.</tooltip>
+            <layout column="2"/>
+        </input>
+
+        <!--Offset-->
+        <input id="VOffset1" type="WizardText">
+            <condition id="IsTwoWays"/>
+            <layout column="2" minheight="40"/>
+        </input>
+
+        <!--Existing Button B-->
+        <input id="ExistingButtonB" type="CButtonLink">
+        <condition id="IsExistingOneTwo"/>
+            <name>Choose Button B</name>
+            <layout column="2" minheight="50"/>
+        </input>
+
+        <!--Create Button B-->
+        <input id="ButtonBName" type="CString">
+            <condition id="IsCreateOneTwo"/>
+            <name>Button B Name</name>
+            <layout column="2" minheight="50"/>
+        </input>
+        <input id="ButtonBIcon" type="CImagePath">
+            <condition id="IsCreateOneTwo"/>
+            <name>Select icon for the Button of ability B</name>
+            <layout column="2"/>
+        </input>
+        <input id="ButtonBHotkey" type="CString">
+            <condition id="IsCreateOneTwo"/>
+            <name>Write one character for setting the hotkey of the Button of ability B</name>
+            <tooltip>Make sure to only write one valid character. If a letter, write in it capital letter.</tooltip>
+            <layout column="2"/>
+        </input>
+        <input id="ButtonBTooltip" type="CStringLink">
+            <condition id="IsCreateOneTwo"/>
+            <name>Write button B tooltip</name>
+            <tooltip>The button tooltip is the text shown when you mouse over the button in the command card.</tooltip>
+            <layout column="2"/>
+        </input>
+
+
+<!--PAGE 2-->
+    <!--Show For All-->
+    <!--INPUT COLUMN 1-->
+        <input id="Duration" type="real32">
+            <name>Duration of the morph</name>
+            <layout page="2"/>
+        </input>
+        
+        <input id="PreQ" type="WizardText">
+            <default value="Next questions are for setting up the flags of the ability"/>
+            <layout page="2"/>
+            <color value="255,0,76,153"/>
+        </input>
+        <input id="Q1" type="WizardRadio">
+            <name>Question 1: Do you want to show the Progress Bar?</name>
+            <tooltip>This will create the progress bar above the unit for the duration of the morph. This will check the Show Progress flag.</tooltip>
+            <item text="No" value="0"/>
+            <item text="Yes" value="1"/>
+            <layout page="2"/>
+        </input>
+        <input id="Q2" type="WizardRadio">
+            <name>Question 2: Is it an individual ability?</name>
+            <tooltip>For example, when morphing an Overlord to an Overseer it will only morph one, even if you have a group selected. This will check Best Unit flag.</tooltip>
+            <item text="No" value="0"/>
+            <item text="Yes" value="1"/>
+            <layout page="2"/>
+        </input>
+        <input id="Q3" type="WizardRadio">
+            <name>Question 3: Are abilities disabled during the morph?</name>
+            <tooltip>For example, when morphing a Lair to a Hive, you cannot research upgrades, it will be greyed out. Other example, the Liberator does not get the abilities disabled, you can still issue orders. This will check Disable Abilities flag.</tooltip>
+            <item text="No" value="0"/>
+            <item text="Yes" value="1"/>
+            <layout page="2"/>
+        </input>
+        <input id="Q4" type="WizardRadio">
+            <name>Question 4: Is it possible to Cancel the morph?</name>
+            <tooltip>Cancelling the morph will refund 75% of the cost. It can be done even if Abilities are disabled. This will check the Interruptible flag.</tooltip>
+            <item text="No" value="0"/>
+            <item text="Yes" value="1"/>
+            <layout page="2"/>
+        </input>
+        <input id="QuestionImliciteText" type="WizardText">
+            <default value="Many implicit flags will be set in the ability."/>
+            <tooltip>For example: Birth, Fast Build, Produce, Suppress Movement, Wait until stopped, Ignore Collision, Ignore Placement, Ignore Facing. If you don't want any of these you'll have to go in the ability's Flag</tooltip>
+            <layout page="2" minheight="50"/>
+            <color value="255,0,153,0"/>
+        </input>
+
+        <!--Warnings-->
+        <input id="Warning1" type="WizardText">
+            <default value="Using this Wizard there are some caveats."/>
+            <layout page="2"/>
+            <color value="255,204,102,0"/>
+        </input>
+        <input id="Warning2" type="WizardText">
+            <default value="-Doing Undo in the editor might leave traces in:"/>
+            <layout page="2"/>
+            <color value="255,204,102,0"/>
+        </input>
+        <input id="Warning3" type="WizardText">
+            <default value="  The unit's abilities, Command Cards, main Actor and in Text editor"/>
+            <layout page="2"/>
+            <color value="255,204,102,0"/>
+        </input>
+        <input id="Warning4" type="WizardText">
+            <default value="-If the Unit's ID does not match exactly the Actor's ID"/>
+            <layout page="2"/>
+            <color value="255,204,102,0"/>
+        </input>
+        <input id="Warning5" type="WizardText">
+            <default value="  The actor data might be created in the wrong place"/>
+            <layout page="2"/>
+            <color value="255,204,102,0"/>
+        </input>
+
+    <!--INPUT COLUMN 2-->
+        <input id="CCRow" type="int8">
+            <name>Command Card Row to place Button</name>
+            <layout page="2" column="2"/>
+            <minimum value = "0"/>
+            <maximum value = "2"/>
+        </input>
+        <input id="CCColumn" type="int8">
+            <name>Command Card Column to place Button</name>
+            <layout page="2" column="2"/>
+            <minimum value = "0"/>
+            <maximum value = "4"/>
+        </input>
+        <input id="ButtonRequirement" type="CRequirementLink">
+            <name>Requirement for executing the ability which greys out the button</name>
+            <tooltip>The requirement for the Button is set in the morph ability Command Execute.</tooltip>
+            <layout page="2" column="2"/>
+        </input>
+        <input id="Activity" type="WizardMenu">
+            <name>Activity text during morph</name>
+            <tooltip>The Activity setting is in the morph ability</tooltip>
+            <layout page="2" column="2"/>
+            <item text="Morphing" value="Morphing"/>
+            <item text="Mutating" value="Mutating"/>
+            <item text="Upgrading" value="Upgrading"/>
+            <item text="Training" value="Training"/>
+            <item text="Warping" value="Warping"/>
+        </input>
+        <input id="Alert" type="CAlertLink">
+            <name>Alert for when the morph is complete.</name>
+            <tooltip>The Alert setting is in the morph ability</tooltip>
+            <layout page="2" column="2"/>
+        </input>
+
+        <input id="AddActorText" type="WizardText">
+            <default value="Mouse over for tooltip about Actors"/>
+            <tooltip>If in the actor of the unit, there is already an event named "AbilMorph.*.Finish" with MorphTo or MorphFrom, you might not need to check these.
+
+This creates specific "Morph to UnitA from UnitB" events in the actor. Each time you morph into a new unit you will need to check these.
+
+Sadly, there is no simple way in the Wizard to precisely know if that event exist. Some units already have default AbilMorph that will interfere. You might need to have to tweak this. Also, these are basic morph, there is no animation involved. 
+
+If you get a Unit Scopre persisting error, carefully check the unit you morph to for generic AbilMorph that don't specify the unit it morphs from.
+</tooltip>
+            <layout page="2" column="2"/>
+            <color value="255,255,0,0"/>
+        </input>
+        <input id="AddActorMorphToUA" type="WizardCheckbox">
+            <name>Check to add MorphTo (create) actor events to Unit A (Required if cancellable or Two Ways)</name>
+            <tooltip>MorphTo is when another unit changes into Unit A, which means you create Unit A's actor
+            (Required if cancellable or Two Ways)</tooltip>
+            <layout page="2" column="2"/>
+        </input>
+        <input id="AddActorMorphFromUA" type="WizardCheckbox">
+            <name>Check to add MorphFrom (destroy) actor events to Unit A</name>
+            <tooltip>MorphFrom is when Unit A changes into another unit, which means you destroy Unit A's actor</tooltip>
+            <layout page="2" column="2"/>
+        </input>
+        <input id="AddActorMorphToUB" type="WizardCheckbox">
+            <name>Check to add MorphTo (create) actor events to Unit B</name>
+            <tooltip>MorphTo is when another unit changes into Unit B, which means you create Unit B's actor
+            Note: Some units already have AbilMorph in the event or transition actors which can interefer here like the marauder, tank, thor, etc. You might need to tweak this.</tooltip>
+            <layout page="2" column="2"/>
+        </input>
+        <input id="AddActorMorphFromUB" type="WizardCheckbox">
+            <name>Check to add MorphFrom (destroy) actor events to Unit B</name>
+            <tooltip>MorphFrom is when Unit B changes into another unit, which means you destroy Unit B's actor</tooltip>
+            <layout page="2" column="2"/>
+        </input>
+
+<!--Entries Start-->
+    <!--Creates the Morph for UnitA Morph to UnitB-->
+    <entry catalog="Abil" type="CAbilMorph">
+        <id>^UnitA^MorphTo^UnitB^</id>
+        <field id="InfoArray_Unit">
+            <value>^UnitB^</value>
+        </field>
+        <field id="Name"><value>^AbilityNameUnitA^</value></field>
+
+        <!--See notes at the bottom to understand the index for the InfoArrays-->
+        <field id="InfoArray_SectionArray_DurationArray">
+            <index>0;5;0</index>
+            <value>^Duration^</value>
+        </field>
+        <field id="InfoArray_SectionArray_DurationArray">
+            <index>0;1;1</index>
+            <value>^Duration^</value>
+        </field>
+        <field id="InfoArray_SectionArray_DurationArray">
+            <index>0;0;0</index>
+            <value>^Duration^</value>
+        </field>
+
+        <field id="Activity">
+            <stringid>UI/^Activity^</stringid>
+            <value>^Activity^</value>
+        </field>
+        <field id="Alert">
+            <value>^Alert^</value>
+        </field>
+
+        <!--Sets the bunch of flags based on Questions-->
+        <!--If Yes-->
+        <field id="Flags"><condition input="Q1" value="1"/><index>22</index><value>1</value></field> <!--Show Progress-->
+        <field id="Flags"><condition input="Q2" value="1"/><index>6</index><value>1</value></field> <!--Best Unit-->
+        <field id="Flags"><condition input="Q3" value="1"/><index>8</index><value>1</value></field> <!--Ability Disabled-->
+        <field id="Flags"><condition input="Q4" value="1"/><index>11</index><value>1</value></field> <!--Interruptible-->
+        
+        <!--If No-->
+        <field id="Flags"><condition input="Q1" value="0"/><index>22</index><value>0</value></field>
+        <field id="Flags"><condition input="Q2" value="0"/><index>6</index><value>0</value></field>
+        <field id="Flags"><condition input="Q3" value="0"/><index>8</index><value>0</value></field>
+        <field id="Flags"><condition input="Q4" value="0"/><index>11</index><value>0</value></field>
+
+        <!--Default-->
+        <field id="Flags"><index>7</index><value>1</value></field>  <!--Birth-->
+        <field id="Flags"><index>10</index><value>1</value></field> <!--Fast Build-->
+        <field id="Flags"><index>12</index><value>1</value></field> <!--Ignore Collision-->
+        <field id="Flags"><index>13</index><value>1</value></field> <!--Ignore Facing-->
+        <field id="Flags"><index>15</index><value>1</value></field> <!--Ignore Placement-->
+        <field id="Flags"><index>18</index><value>1</value></field> <!--Produce-->
+        <field id="Flags"><index>23</index><value>1</value></field> <!--Suppress Movement-->
+        <field id="Flags"><index>26</index><value>1</value></field> <!--Wait until stopped-->
+
+        <!--Ability Command Execute-->
+            <!--Use existing button-->
+            <field id="CmdButtonArray_DefaultButtonFace">
+                <condition id="IsExistingButton"/>
+                <index>0</index>
+                <value>^ExistingButtonA^</value>
+            </field>
+            <!--Use a new button-->
+            <field id="CmdButtonArray_DefaultButtonFace">
+                <condition id="IsCreateButton"/>
+                <index>0</index>
+                <value>^UnitA^MorphTo^UnitB^Button</value>
+            </field>
+            <!--Adds the requirement to the button-->
+            <field id="CmdButtonArray_Requirements">
+                <index>0</index>
+                <value>^ButtonRequirement^</value>
+            </field>
+        
+        <!--Ability Command Cancel-->
+            <field id="CmdButtonArray_DefaultButtonFace">
+                <index>1</index>
+                <value>Cancel</value>
+            </field>
+    </entry>
+
+    <!--Creates the Morph for UnitB Morph to UnitA-->
+    <entry catalog="Abil" type="CAbilMorph">
+        <condition id="IsTwoWays"/>
+        <id>^UnitB^MorphTo^UnitA^</id>
+        <field id="InfoArray_Unit">
+            <value>^UnitA^</value>
+        </field>
+        <field id="Name"><value>^AbilityNameUnitB^</value></field>
+
+        <!--See notes at the bottom to understand the index for the InfoArrays-->
+        <field id="InfoArray_SectionArray_DurationArray">
+            <index>0;5;0</index>
+            <value>^Duration^</value>
+        </field>
+        <field id="InfoArray_SectionArray_DurationArray">
+            <index>0;1;1</index>
+            <value>^Duration^</value>
+        </field>
+        <field id="InfoArray_SectionArray_DurationArray">
+            <index>0;0;0</index>
+            <value>^Duration^</value>
+        </field>
+
+        <field id="Activity">
+            <stringid>UI/^Activity^</stringid>
+            <value>^Activity^</value>
+        </field>
+        <field id="Alert">
+            <value>^Alert^</value>
+        </field>
+
+        <!--Sets the bunch of flags based on Questions-->
+        <!--If Yes-->
+        <field id="Flags"><condition input="Q1" value="1"/><index>22</index><value>1</value></field> <!--Show Progress-->
+        <field id="Flags"><condition input="Q2" value="1"/><index>6</index><value>1</value></field> <!--Best Unit-->
+        <field id="Flags"><condition input="Q3" value="1"/><index>8</index><value>1</value></field> <!--Ability Disabled-->
+        <field id="Flags"><condition input="Q4" value="1"/><index>11</index><value>1</value></field> <!--Interruptible-->
+        
+        <!--If No-->
+        <field id="Flags"><condition input="Q1" value="0"/><index>22</index><value>0</value></field>
+        <field id="Flags"><condition input="Q2" value="0"/><index>6</index><value>0</value></field>
+        <field id="Flags"><condition input="Q3" value="0"/><index>8</index><value>0</value></field>
+        <field id="Flags"><condition input="Q4" value="0"/><index>11</index><value>0</value></field>
+
+        <!--Default-->
+        <field id="Flags"><index>7</index><value>1</value></field>  <!--Birth-->
+        <field id="Flags"><index>10</index><value>1</value></field> <!--Fast Build-->
+        <field id="Flags"><index>12</index><value>1</value></field> <!--Ignore Collision-->
+        <field id="Flags"><index>13</index><value>1</value></field> <!--Ignore Facing-->
+        <field id="Flags"><index>15</index><value>1</value></field> <!--Ignore Placement-->
+        <field id="Flags"><index>18</index><value>1</value></field> <!--Produce-->
+        <field id="Flags"><index>23</index><value>1</value></field> <!--Suppress Movement-->
+        <field id="Flags"><index>26</index><value>1</value></field> <!--Wait until stopped-->
+
+        <!--Ability Command Execute-->
+            <!--Use existing button-->
+            <field id="CmdButtonArray_DefaultButtonFace">
+                <condition id="IsExistingButton"/>
+                <index>0</index>
+                <value>^ExistingButtonB^</value>
+            </field>
+            <!--Use a new button-->
+            <field id="CmdButtonArray_DefaultButtonFace">
+                <condition id="IsCreateButton"/>
+                <index>0</index>
+                <value>^UnitB^MorphTo^UnitA^Button</value>
+            </field>
+            <!--Adds the requirement to the button-->
+            <field id="CmdButtonArray_Requirements">
+                <index>0</index>
+                <value>^ButtonRequirement^</value>
+            </field>
+        
+        <!--Ability Command Cancel-->
+            <field id="CmdButtonArray_DefaultButtonFace">
+                <index>1</index>
+                <value>Cancel</value>
+            </field>
+    </entry>
+
+    <!--Create the new button A-->
+    <entry catalog="Button" type="CButton">
+        <condition id="IsCreateButton"/>
+        <id>^UnitA^MorphTo^UnitB^Button</id>
+        <field id="Name">
+            <condition input="ButtonName" empty="0"/>
+            <value>^ButtonAName^</value>
+        </field>
+        <field id="Name">
+            <condition input="ButtonName" empty="1"/>
+            <value>^UnitA^MorphTo^UnitB^Button</value>
+        </field>
+        <field id="Icon">
+            <condition input="ButtonAIcon" empty="0"/>
+            <value>^ButtonAIcon^</value>
+        </field>
+        <!--Indirect way of setting the hotkey using ChargeText to add a text entry to the default hotkey link and then reset the field to empty, the hotkey will stay linked to the text entry-->
+        <field id="EditorPrefix">
+            <condition input="ButtonAHotkey" empty="0"/>
+            <stringid>Button/Hotkey/^UnitA^MorphTo^UnitB^Button</stringid>
+            <value>^ButtonAHotkey^</value>
+        </field>
+        <field id="EditorPrefix">
+            <condition input="ButtonAHotkey" empty="0"/>
+            <stringid>Button/EditorPrefix/##id##</stringid>
+            <value></value>
+        </field>
+        <field id="Tooltip">
+            <condition input="ButtonATooltip" empty="0"/>
+            <stringid>Button/Tooltip/^UnitA^MorphTo^UnitB^Button</stringid>
+            <value>^ButtonATooltip^</value>
+        </field>
+    </entry>
+
+    <!--Create the new button B-->
+    <entry catalog="Button" type="CButton">
+        <condition id="IsCreateOneTwo"/>
+        <id>^UnitB^MorphTo^UnitA^Button</id>
+        <field id="Name">
+            <condition input="ButtonName" empty="0"/>
+            <value>^ButtonBName^</value>
+        </field>
+        <field id="Name">
+            <condition input="ButtonName" empty="1"/>
+            <value>^UnitB^MorphTo^UnitA^Button</value>
+        </field>
+        <field id="Icon">
+            <condition input="ButtonBIcon" empty="0"/>
+            <value>^ButtonBIcon^</value>
+        </field>
+        <!--Indirect way of setting the hotkey using ChargeText to add a text entry to the default hotkey link and then reset the field to empty, the hotkey will stay linked to the text entry-->
+        <field id="EditorPrefix">
+            <condition input="ButtonBHotkey" empty="0"/>
+            <stringid>Button/Hotkey/^UnitB^MorphTo^UnitA^Button</stringid>
+            <value>^ButtonBHotkey^</value>
+        </field>
+        <field id="EditorPrefix">
+            <condition input="ButtonBHotkey" empty="0"/>
+            <stringid>Button/EditorPrefix/##id##</stringid>
+            <value></value>
+        </field>
+        <field id="Tooltip">
+            <condition input="ButtonBTooltip" empty="0"/>
+            <stringid>Button/Tooltip/^UnitB^MorphTo^UnitA^Button</stringid>
+            <value>^ButtonBTooltip^</value>
+        </field>
+    </entry>
+
+<!--UnitA-->
+    <!--Modify UnitA-->
+    <!--DummyInput to count the number of button in Unit A command card-->
+    <input id="DummyButtonCount" type="int8">
+        <condition id="IsDisabled"/>
+        <loadvalue>ref=Unit,^UnitA^,CardLayouts[0].LayoutButtons#</loadvalue>
+        <reloadfrom>UnitA</reloadfrom>
+        <layout page="2"/>
+    </input>
+    <macro id="DBC2">^DummyButtonCount^+1</macro>
+
+    <entry catalog="Unit" type="CUnit">
+        <id>^UnitA^</id>
+        <allowmodify/>
+        <field id="AbilArray">
+            <index>ref=Unit,^UnitA^,AbilArray#</index>
+            <value>^UnitA^MorphTo^UnitB^</value>
+        </field>
+
+        <!--Add the Execute Button to the Command Card-->
+        <field id="CardLayouts_LayoutButtons_Face">
+            <condition id="IsExistingButton"/>
+            <index>^DummyButtonCount^</index>
+            <value>^ExistingButtonA^</value>
+        </field>
+        <field id="CardLayouts_LayoutButtons_Face">
+            <condition id="IsCreateButton"/>
+            <index>^DummyButtonCount^</index>
+            <value>^UnitA^MorphTo^UnitB^Button</value>
+        </field>
+            <!--Modify the Execute Button-->
+            <field id="CardLayouts_LayoutButtons_Type">
+                <index>^DummyButtonCount^</index>
+                <value>AbilCmd</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_AbilCmd">
+                <index>^DummyButtonCount^</index>
+                <value>^UnitA^MorphTo^UnitB^,Execute</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_Row">
+                <index>^DummyButtonCount^</index>
+                <value>^CCRow^</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_Column">
+                <index>^DummyButtonCount^</index>
+                <value>^CCColumn^</value>
+            </field>
+
+        <!--Add the Cancel Button to the Command Card-->
+        <field id="CardLayouts_LayoutButtons_Face">
+            <index>^DBC2^</index>
+            <value>Cancel</value>
+        </field>
+            <!--Modify the Cancel Button-->
+            <field id="CardLayouts_LayoutButtons_Type">
+                <index>^DBC2^</index>
+                <value>AbilCmd</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_AbilCmd">
+                <index>^DBC2^</index>
+                <value>^UnitA^MorphTo^UnitB^,Cancel</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_Row">
+                <index>^DBC2^</index>
+                <value>2</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_Column">
+                <index>^DBC2^</index>
+                <value>4</value>
+            </field>
+    </entry>
+
+
+    <!--Set Unit A Actors-->
+    <!--DummyInput to count the number of actor events in Unit A-->
+    <input id="DummyActorCountUnitA" type="int32">
+        <condition id="IsDisabled"/>
+        <loadvalue>ref=Actor,^UnitA^,On#</loadvalue>
+        <reloadfrom>UnitA</reloadfrom>
+        <layout page="2"/>
+    </input>
+    <macro id="DACUA1">^DummyActorCountUnitA^</macro>
+    <macro id="DACUA2">^DummyActorCountUnitA^+1</macro>
+    <macro id="DACUA3">^DummyActorCountUnitA^+2</macro>
+
+    <entry catalog="Actor" type="CActorUnit">
+        <id>^UnitA^</id>
+        <allowmodify/>
+
+        <!--Add Actor to Unit A-->
+        <!--Add the "MorphTo Create"-->
+        <field id = "On_Terms">
+            <condition input="AddActorMorphToUA" value="1"/>
+            <index>^DACUA1^</index>
+            <value>AbilMorph.*.Finish; MorphTo ^UnitA^; MorphFrom ^UnitB^</value>
+        </field>
+        <field id = "On_Send">
+            <condition input="AddActorMorphToUA" value="1"/>
+            <index>^DACUA1^</index>
+            <value>Create</value>
+        </field>
+
+        <!--Add the "MorphFrom Destroy" If first actor is NOT created, use the 1st index-->
+        <field id = "On_Terms">
+            <condition logic="and">
+                <condition input="AddActorMorphFromUA" value="1"/>
+                <condition input="AddActorMorphToUA" value="0"/>
+            </condition>
+            <index>^DACUA1^</index>
+            <value>AbilMorph.*.Finish; MorphFrom ^UnitA^; MorphTo ^UnitB^</value>
+        </field>
+        <field id = "On_Send">
+            <condition logic="and">
+                <condition input="AddActorMorphFromUA" value="1"/>
+                <condition input="AddActorMorphToUA" value="0"/>
+            </condition>
+            <index>^DACUA1^</index>
+            <value>Destroy</value>
+        </field>
+        <!--Add the "MorphFrom Destroy" If first actor IS created, use the 2nd index-->
+        <field id = "On_Terms">
+            <condition logic="and">
+                <condition input="AddActorMorphFromUA" value="1"/>
+                <condition input="AddActorMorphToUA" value="1"/>
+            </condition>
+            <index>^DACUA2^</index>
+            <value>AbilMorph.*.Finish; MorphFrom ^UnitA^; MorphTo ^UnitB^</value>
+        </field>
+        <field id = "On_Send">
+            <condition logic="and">
+                <condition input="AddActorMorphFromUA" value="1"/>
+                <condition input="AddActorMorphToUA" value="1"/>
+            </condition>
+            <index>^DACUA2^</index>
+            <value>Destroy</value>
+        </field>
+
+        <!--Add Cancel "MorphFrom Destroy" If first actor is NOT created, use the 2nd index-->
+        <field id = "On_Terms">
+            <condition logic="and">
+                <condition input="AddActorMorphFromUA" value="1"/>
+                <condition input="AddActorMorphToUA" value="0"/>
+                <condition input="Q4" value="1"/>
+            </condition>
+            <index>^DACUA2^</index>
+            <value>AbilMorph.*.Cancel; MorphFrom ^UnitA^; MorphTo ^UnitB^</value>
+        </field>
+        <field id = "On_Send">
+            <condition logic="and">
+                <condition input="AddActorMorphFromUA" value="1"/>
+                <condition input="AddActorMorphToUA" value="0"/>
+                <condition input="Q4" value="1"/>
+            </condition>
+            <index>^DACUA2^</index>
+            <value>Destroy</value>
+        </field>
+        <!--Add Cancel "MorphFrom Destroy" If first actor IS created, use the 3rd index-->
+        <field id = "On_Terms">
+            <condition logic="and">
+                <condition input="AddActorMorphFromUA" value="1"/>
+                <condition input="AddActorMorphToUA" value="1"/>
+                <condition input="Q4" value="1"/>
+            </condition>
+            <index>^DACUA3^</index>
+            <value>AbilMorph.*.Cancel; MorphFrom ^UnitA^; MorphTo ^UnitB^</value>
+        </field>
+        <field id = "On_Send">
+            <condition logic="and">
+                <condition input="AddActorMorphFromUA" value="1"/>
+                <condition input="AddActorMorphToUA" value="1"/>
+                <condition input="Q4" value="1"/>
+            </condition>
+            <index>^DACUA3^</index>
+            <value>Destroy</value>
+        </field>
+    </entry>
+
+
+
+<!--UnitB-->
+    <!--Modify UnitB-->
+    <!--DummyInput to count the number of button in Unit B command card-->
+    <input id="DummyButtonCountB" type="int8">
+        <condition id="IsDisabled"/>
+        <loadvalue>ref=Unit,^UnitB^,CardLayouts[0].LayoutButtons#</loadvalue>
+        <reloadfrom>UnitB</reloadfrom>
+        <layout page="2"/>
+    </input>
+    <macro id="DBCB2">^DummyButtonCountB^+1</macro>
+
+    <entry catalog="Unit" type="CUnit">
+        <condition id="IsTwoWays"/>
+        <id>^UnitB^</id>
+        <allowmodify/>
+        <field id="AbilArray">
+            <index>ref=Unit,^UnitB^,AbilArray#</index>
+            <value>^UnitB^MorphTo^UnitA^</value>
+        </field>
+
+        <!--Add the Execute Button to the Command Card-->
+        <field id="CardLayouts_LayoutButtons_Face">
+            <condition id="IsExistingButton"/>
+            <index>^DummyButtonCountB^</index>
+            <value>^ExistingButtonB^</value>
+        </field>
+        <field id="CardLayouts_LayoutButtons_Face">
+            <condition id="IsCreateButton"/>
+            <index>^DummyButtonCountB^</index>
+            <value>^UnitB^MorphTo^UnitA^Button</value>
+        </field>
+            <!--Modify the Execute Button-->
+            <field id="CardLayouts_LayoutButtons_Type">
+                <index>^DummyButtonCountB^</index>
+                <value>AbilCmd</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_AbilCmd">
+                <index>^DummyButtonCountB^</index>
+                <value>^UnitB^MorphTo^UnitA^,Execute</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_Row">
+                <index>^DummyButtonCountB^</index>
+                <value>^CCRow^</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_Column">
+                <index>^DummyButtonCountB^</index>
+                <value>^CCColumn^</value>
+            </field>
+
+        <!--Add the Cancel Button to the Command Card-->
+        <field id="CardLayouts_LayoutButtons_Face">
+            <index>^DBCB2^</index>
+            <value>Cancel</value>
+        </field>
+            <!--Modify the Cancel Button-->
+            <field id="CardLayouts_LayoutButtons_Type">
+                <index>^DBCB2^</index>
+                <value>AbilCmd</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_AbilCmd">
+                <index>^DBCB2^</index>
+                <value>^UnitB^MorphTo^UnitA^,Cancel</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_Row">
+                <index>^DBCB2^</index>
+                <value>2</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_Column">
+                <index>^DBCB2^</index>
+                <value>4</value>
+            </field>
+    </entry>
+
+    <!--DummyInput to count the number of actor events in Unit B-->
+    <input id="DummyActorCountUnitB" type="int32">
+        <condition id="IsDisabled"/>
+        <loadvalue>ref=Actor,^UnitB^,On#</loadvalue>
+        <reloadfrom>UnitB</reloadfrom>
+        <layout page="2"/>
+    </input>
+    <macro id="DACUB1">^DummyActorCountUnitB^</macro>
+    <macro id="DACUB2">^DummyActorCountUnitB^+1</macro>
+    <macro id="DACUB3">^DummyActorCountUnitB^+2</macro>
+
+    <entry catalog="Actor" type="CActorUnit">
+        <id>^UnitB^</id>
+        <allowmodify/>
+
+        <!--Add Actor to Unit B-->
+        <!--Add the "MorphTo Create"-->
+       <field id = "On_Terms">
+            <condition input="AddActorMorphToUB" value="1"/>
+            <index>^DACUB1^</index>
+            <value>AbilMorph.*.Finish; MorphTo ^UnitB^; MorphFrom ^UnitA^</value>
+        </field>
+        <field id = "On_Send">
+            <condition input="AddActorMorphToUB" value="1"/>
+            <index>^DACUB1^</index>
+            <value>Create</value>
+        </field>
+
+        <!--Add the "MorphFrom Destroy" If first actor is NOT created, use the 1st index-->
+        <field id = "On_Terms">
+            <condition logic="and">
+                <condition input="AddActorMorphFromUB" value="1"/>
+                <condition input="AddActorMorphToUB" value="0"/>
+            </condition>
+            <index>^DACUB1^</index>
+            <value>AbilMorph.*.Finish; MorphFrom ^UnitB^; MorphTo ^UnitA^</value>
+        </field>
+        <field id = "On_Send">
+            <condition logic="and">
+                <condition input="AddActorMorphFromUB" value="1"/>
+                <condition input="AddActorMorphToUB" value="0"/>
+            </condition>
+            <index>^DACUB1^</index>
+            <value>Destroy</value>
+        </field>
+
+        <!--Add the "MorphFrom Destroy" If first actor is created, use the 2nd index-->
+        <field id = "On_Terms">
+            <condition logic="and">
+                <condition input="AddActorMorphFromUB" value="1"/>
+                <condition input="AddActorMorphToUB" value="1"/>
+            </condition>
+            <index>^DACUB2^</index>
+            <value>AbilMorph.*.Finish; MorphFrom ^UnitB^; MorphTo ^UnitA^</value>
+        </field>
+        <field id = "On_Send">
+            <condition logic="and">
+                <condition input="AddActorMorphFromUB" value="1"/>
+                <condition input="AddActorMorphToUB" value="1"/>
+            </condition>
+            <index>^DACUB2^</index>
+            <value>Destroy</value>
+        </field>
+
+        <!--Add Cancel "MorphFrom Destroy" If first actor is NOT created, use the 2nd index-->
+        <field id = "On_Terms">
+            <condition logic="and">
+                <condition input="AddActorMorphFromUB" value="1"/>
+                <condition input="AddActorMorphToUB" value="0"/>
+                <condition input="Q4" value="1"/>
+            </condition>
+            <index>^DACUB2^</index>
+            <value>AbilMorph.*.Cancel; MorphFrom ^UnitB^; MorphTo ^UnitA^</value>
+        </field>
+        <field id = "On_Send">
+            <condition logic="and">
+                <condition input="AddActorMorphFromUB" value="1"/>
+                <condition input="AddActorMorphToUB" value="0"/>
+                <condition input="Q4" value="1"/>
+            </condition>
+            <index>^DACUB2^</index>
+            <value>Destroy</value>
+        </field>
+        <!--Add Cancel "MorphFrom Destroy" If first actor IS created, use the 3rd index-->
+        <field id = "On_Terms">
+            <condition logic="and">
+                <condition input="AddActorMorphFromUB" value="1"/>
+                <condition input="AddActorMorphToUB" value="1"/>
+                <condition input="Q4" value="1"/>
+            </condition>
+            <index>^DACUB3^</index>
+            <value>AbilMorph.*.Cancel; MorphFrom ^UnitB^; MorphTo ^UnitA^</value>
+        </field>
+        <field id = "On_Send">
+            <condition logic="and">
+                <condition input="AddActorMorphFromUB" value="1"/>
+                <condition input="AddActorMorphToUB" value="1"/>
+                <condition input="Q4" value="1"/>
+            </condition>
+            <index>^DACUB3^</index>
+            <value>Destroy</value>
+        </field>
+    </entry>
+
+
+
+<!--Create a side wizard to add morph actor to unit in case you didn't pick the right thing.-->
+
+
+<!--Notes about Index
+In this case, it is accessing the value that is stored behind a list of arrays. When you are in the morph Ability, and you click on the Info, this is your first array.
+You add a unit there. The array always start at 0. So the first unit you add is the first number in the index. Then to choose the second array, it is the section here.
+You can see "Section Duration Value" The "Section" array goes like this: 0 for Abilities, 1 for Actors, 2 for Collision, etc. and it is your 2nd number.
+The "Duration" with the values "Delay" and "Duration" is your 3nd number in the index. 0 for Delay, 1 for Duration.
+So if you want to modify the Stats Duration of your first unit, it would be 0;5;1
+
+
+Risks for this Wizard:
+-Doing Undo might leave traces in the unit's abilities, main actor and command cards. It Seems to be a bug. You'll have to manually remove that remaning data.
+-If the Unit ID does NOT match exactly the Actor ID of that unit, the actor data might be created in the wrong place. For example Thor unit's ID is "ThorAP", but thor's actor ID is "Thor".
+-Text values are created for the Button Hotkey. Deleting the button or doing Undo, will not remove the text entry. Go to the Module -> Text to delete any unused entry.
+-->
+
+</wizard>

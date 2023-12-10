@@ -1,0 +1,2025 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<wizard id="FenixUpgrade">
+	<name>Fenix - Upgrade v1.0</name>
+	<objecttypes create="Upgrade"/>
+<!--This wizard will create an upgrade for you or modify an existing one. You can only add values to the upgrades. If you need to remove a change, you'll have to edit the Upgrade.
+
+The Wizard will do for you:
+-Create the upgrade with all the affected units and changes
+-Create the research ability if the unit you want to add the upgrade to does not have one
+-Create the Requirements Show/hide based on the Max Level of your upgrade
+-Modify the picked unit's command card by adding the ability to research and queue-->
+
+
+<!--Conditions-->
+	<condition id="IsCreateUpgrade" input="CreateUpgrade" value="1"/>
+	<condition id="IsExistingUpgrade" input="CreateUpgrade" value="0"/>
+	<condition id="IsDisabled" input="Disabled" value="1"/>
+
+	<condition id="UnitPicked" logic="and">
+		<condition input="AddToUnit" empty="0"/>
+		<condition id="IsCreateUpgrade"/>
+	</condition>
+	
+		<condition id="IsCreateUpgradeAndResearch" logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="ResearchAbility" value="1"/>
+		</condition>
+
+	<condition id="ForUnit" logic="or">
+		<condition input="Change" value="Speed"/>
+		<condition input="Change" value="Sight"/>
+		<condition input="Change" value="LifeArmor"/>
+		<condition input="Change" value="LifeArmorLevel"/>
+		<condition input="Change" value="ShieldArmor"/>
+		<condition input="Change" value="ShieldArmorLevel"/>
+		<condition input="Change" value="LifeMax"/>
+		<condition input="Change" value="LifeStart"/>
+		<condition input="Change" value="LifeRegenRate"/>
+		<condition input="Change" value="ShieldsMax"/>
+		<condition input="Change" value="ShieldsStart"/>
+		<condition input="Change" value="ShieldRegenRate"/>
+		<condition input="Change" value="EnergyMax"/>
+		<condition input="Change" value="EnergyStart"/>
+		<condition input="Change" value="EnergyRegenRate"/>
+	</condition>
+
+	<condition id="ForUnitReal">
+		<condition logic="and">
+			<condition id="ForUnit"/>
+			<condition logic="not">
+					<condition logic="or">
+						<condition input="Change" value="LifeArmorLevel"/>
+						<condition input="Change" value="ShieldArmorLevel"/>
+					</condition>
+			</condition>
+		</condition>
+	</condition>
+
+	<condition id="ForUnitInt">
+		<condition logic="and">
+			<condition id="ForUnit"/>
+			<condition logic="or">
+				<condition input="Change" value="LifeArmorLevel"/>
+				<condition input="Change" value="ShieldArmorLevel"/>
+			</condition>
+		</condition>
+	</condition>
+
+	<condition id="ForWeapon" logic="or">
+		<condition input="Change" value="Period"/>
+		<condition input="Change" value="Range"/>
+		<condition input="Change" value="RateMultiplier"/>
+		<condition input="Change" value="Level"/>
+	</condition>
+
+	<condition id="ForWeaponIcon">
+		<condition input="Change" value="Icon"/>
+	</condition>
+
+	<condition id="ForWeaponNotIcon" logic="and">
+		<condition id="ForWeapon"/>
+		<condition logic="not">
+			<condition logic="or">
+				<condition id="ForWeaponIcon"/>
+				<condition id="ForWeaponLevel"/>
+			</condition>
+		</condition>
+	</condition>
+
+	<condition id="ForWeaponOrIcon" logic="or">
+		<condition id="ForWeapon"/>
+		<condition id="ForWeaponIcon"/>
+	</condition>
+	
+	<condition id="ForEffect" input="Change" value="DefinedInDamageBonus"/>
+
+	<condition id="ForActor" logic="or">
+		<condition input="Change" value="LifeArmorIcon"/>
+		<condition input="Change" value="ShieldArmorIcon"/>
+	</condition>
+
+	<condition id="ForWeaponLevel">
+		<condition input="Change" value="Level"/>
+	</condition>
+
+	<condition id="IsCreateUpgradeAndAddQueue" logic="and">
+		<condition id="IsCreateUpgrade"/>
+		<condition input="AddQueueAbil" value="0"/>
+	</condition>
+
+	<!--Show hide if int if it's level or not. This might need tweaking of other fields are int only-->
+	<condition id="ForInt">
+		<condition logic="and">
+			<condition id="NotIcon"/>
+			<condition logic="or">
+				<condition input="Change" value="Level"/>
+				<condition input="Change" value="LifeArmorLevel"/>
+				<condition input="Change" value="ShieldArmorLevel"/>
+				<condition input="Change" value="UpgradeCost"/>
+			</condition>
+		</condition>
+	</condition>
+	<condition id="ForReal">
+		<condition logic="and">
+			<condition id="NotIcon"/>
+			<condition logic="not">
+				<condition logic="or">
+					<condition input="Change" value="Level"/>
+					<condition input="Change" value="LifeArmorLevel"/>
+					<condition input="Change" value="ShieldArmorLevel"/>
+					<condition input="Change" value="UpgradeCost"/>
+				</condition>
+			</condition>
+		</condition>
+	</condition>
+
+	<condition id="NotIcon">
+		<condition logic="not">
+			<condition logic="or">
+				<condition input="Change" value="ShieldArmorIcon"/>
+				<condition input="Change" value="LifeArmorIcon"/>
+				<condition input="Change" value="Icon"/>
+				<condition input="Change" value="UpgradeCost"/>
+			</condition>
+		</condition>
+	</condition>
+
+	<!--For Conditions, prevents empty values from generating data-->
+	<condition id="ForUnit1" logic="and"><condition id="ForUnitReal"/><condition input="Unit1" empty="0"/></condition>
+	<condition id="ForUnit2" logic="and"><condition id="ForUnitReal"/><condition input="Unit2" empty="0"/></condition>
+	<condition id="ForUnit3" logic="and"><condition id="ForUnitReal"/><condition input="Unit3" empty="0"/></condition>
+	<condition id="ForUnit4" logic="and"><condition id="ForUnitReal"/><condition input="Unit4" empty="0"/></condition>
+	<condition id="ForUnit5" logic="and"><condition id="ForUnitReal"/><condition input="Unit5" empty="0"/></condition>
+	<condition id="ForUnit6" logic="and"><condition id="ForUnitReal"/><condition input="Unit6" empty="0"/></condition>
+	<condition id="ForUnit7" logic="and"><condition id="ForUnitReal"/><condition input="Unit7" empty="0"/></condition>
+	<condition id="ForUnit8" logic="and"><condition id="ForUnitReal"/><condition input="Unit8" empty="0"/></condition>
+	<condition id="ForUnit9" logic="and"><condition id="ForUnitReal"/><condition input="Unit9" empty="0"/></condition>
+	<condition id="ForUnit10" logic="and"><condition id="ForUnitReal"/><condition input="Unit10" empty="0"/></condition>
+	<condition id="ForUnitInt1" logic="and"><condition id="ForUnitInt"/><condition input="Unit1" empty="0"/></condition>
+	<condition id="ForUnitInt2" logic="and"><condition id="ForUnitInt"/><condition input="Unit2" empty="0"/></condition>
+	<condition id="ForUnitInt3" logic="and"><condition id="ForUnitInt"/><condition input="Unit3" empty="0"/></condition>
+	<condition id="ForUnitInt4" logic="and"><condition id="ForUnitInt"/><condition input="Unit4" empty="0"/></condition>
+	<condition id="ForUnitInt5" logic="and"><condition id="ForUnitInt"/><condition input="Unit5" empty="0"/></condition>
+	<condition id="ForUnitInt6" logic="and"><condition id="ForUnitInt"/><condition input="Unit6" empty="0"/></condition>
+	<condition id="ForUnitInt7" logic="and"><condition id="ForUnitInt"/><condition input="Unit7" empty="0"/></condition>
+	<condition id="ForUnitInt8" logic="and"><condition id="ForUnitInt"/><condition input="Unit8" empty="0"/></condition>
+	<condition id="ForUnitInt9" logic="and"><condition id="ForUnitInt"/><condition input="Unit9" empty="0"/></condition>
+	<condition id="ForUnitInt10" logic="and"><condition id="ForUnitInt"/><condition input="Unit10" empty="0"/></condition>
+	<condition id="ForWeaponNotIcon1" logic="and"><condition id="ForWeaponNotIcon"/><condition input="Weapon1" empty="0"/></condition>
+	<condition id="ForWeaponNotIcon2" logic="and"><condition id="ForWeaponNotIcon"/><condition input="Weapon2" empty="0"/></condition>
+	<condition id="ForWeaponNotIcon3" logic="and"><condition id="ForWeaponNotIcon"/><condition input="Weapon3" empty="0"/></condition>
+	<condition id="ForWeaponNotIcon4" logic="and"><condition id="ForWeaponNotIcon"/><condition input="Weapon4" empty="0"/></condition>
+	<condition id="ForWeaponNotIcon5" logic="and"><condition id="ForWeaponNotIcon"/><condition input="Weapon5" empty="0"/></condition>
+	<condition id="ForWeaponNotIcon6" logic="and"><condition id="ForWeaponNotIcon"/><condition input="Weapon6" empty="0"/></condition>
+	<condition id="ForWeaponNotIcon7" logic="and"><condition id="ForWeaponNotIcon"/><condition input="Weapon7" empty="0"/></condition>
+	<condition id="ForWeaponNotIcon8" logic="and"><condition id="ForWeaponNotIcon"/><condition input="Weapon8" empty="0"/></condition>
+	<condition id="ForWeaponNotIcon9" logic="and"><condition id="ForWeaponNotIcon"/><condition input="Weapon9" empty="0"/></condition>
+	<condition id="ForWeaponNotIcon10" logic="and"><condition id="ForWeaponNotIcon"/><condition input="Weapon10" empty="0"/></condition>
+	<condition id="ForEffect1" logic="and"><condition id="ForEffect"/><condition input="Effect1" empty="0"/></condition>
+	<condition id="ForEffect2" logic="and"><condition id="ForEffect"/><condition input="Effect2" empty="0"/></condition>
+	<condition id="ForEffect3" logic="and"><condition id="ForEffect"/><condition input="Effect3" empty="0"/></condition>
+	<condition id="ForEffect4" logic="and"><condition id="ForEffect"/><condition input="Effect4" empty="0"/></condition>
+	<condition id="ForEffect5" logic="and"><condition id="ForEffect"/><condition input="Effect5" empty="0"/></condition>
+	<condition id="ForEffect6" logic="and"><condition id="ForEffect"/><condition input="Effect6" empty="0"/></condition>
+	<condition id="ForEffect7" logic="and"><condition id="ForEffect"/><condition input="Effect7" empty="0"/></condition>
+	<condition id="ForEffect8" logic="and"><condition id="ForEffect"/><condition input="Effect8" empty="0"/></condition>
+	<condition id="ForEffect9" logic="and"><condition id="ForEffect"/><condition input="Effect9" empty="0"/></condition>
+	<condition id="ForEffect10" logic="and"><condition id="ForEffect"/><condition input="Effect10" empty="0"/></condition>
+	<condition id="ForWeaponIcon1" logic="and"><condition id="ForWeaponIcon"/><condition input="Weapon1" empty="0"/></condition>
+	<condition id="ForWeaponIcon2" logic="and"><condition id="ForWeaponIcon"/><condition input="Weapon2" empty="0"/></condition>
+	<condition id="ForWeaponIcon3" logic="and"><condition id="ForWeaponIcon"/><condition input="Weapon3" empty="0"/></condition>
+	<condition id="ForWeaponIcon4" logic="and"><condition id="ForWeaponIcon"/><condition input="Weapon4" empty="0"/></condition>
+	<condition id="ForWeaponIcon5" logic="and"><condition id="ForWeaponIcon"/><condition input="Weapon5" empty="0"/></condition>
+	<condition id="ForWeaponIcon6" logic="and"><condition id="ForWeaponIcon"/><condition input="Weapon6" empty="0"/></condition>
+	<condition id="ForWeaponIcon7" logic="and"><condition id="ForWeaponIcon"/><condition input="Weapon7" empty="0"/></condition>
+	<condition id="ForWeaponIcon8" logic="and"><condition id="ForWeaponIcon"/><condition input="Weapon8" empty="0"/></condition>
+	<condition id="ForWeaponIcon9" logic="and"><condition id="ForWeaponIcon"/><condition input="Weapon9" empty="0"/></condition>
+	<condition id="ForWeaponIcon10" logic="and"><condition id="ForWeaponIcon"/><condition input="Weapon10" empty="0"/></condition>
+	<condition id="ForWeaponLevel1" logic="and"><condition id="ForWeaponLevel"/><condition input="Weapon1" empty="0"/></condition>
+	<condition id="ForWeaponLevel2" logic="and"><condition id="ForWeaponLevel"/><condition input="Weapon2" empty="0"/></condition>
+	<condition id="ForWeaponLevel3" logic="and"><condition id="ForWeaponLevel"/><condition input="Weapon3" empty="0"/></condition>
+	<condition id="ForWeaponLevel4" logic="and"><condition id="ForWeaponLevel"/><condition input="Weapon4" empty="0"/></condition>
+	<condition id="ForWeaponLevel5" logic="and"><condition id="ForWeaponLevel"/><condition input="Weapon5" empty="0"/></condition>
+	<condition id="ForWeaponLevel6" logic="and"><condition id="ForWeaponLevel"/><condition input="Weapon6" empty="0"/></condition>
+	<condition id="ForWeaponLevel7" logic="and"><condition id="ForWeaponLevel"/><condition input="Weapon7" empty="0"/></condition>
+	<condition id="ForWeaponLevel8" logic="and"><condition id="ForWeaponLevel"/><condition input="Weapon8" empty="0"/></condition>
+	<condition id="ForWeaponLevel9" logic="and"><condition id="ForWeaponLevel"/><condition input="Weapon9" empty="0"/></condition>
+	<condition id="ForWeaponLevel10" logic="and"><condition id="ForWeaponLevel"/><condition input="Weapon10" empty="0"/></condition>
+	<condition id="ForActor1" logic="and"><condition id="ForActor"/><condition input="Actor1" empty="0"/></condition>
+	<condition id="ForActor2" logic="and"><condition id="ForActor"/><condition input="Actor2" empty="0"/></condition>
+	<condition id="ForActor3" logic="and"><condition id="ForActor"/><condition input="Actor3" empty="0"/></condition>
+	<condition id="ForActor4" logic="and"><condition id="ForActor"/><condition input="Actor4" empty="0"/></condition>
+	<condition id="ForActor5" logic="and"><condition id="ForActor"/><condition input="Actor5" empty="0"/></condition>
+	<condition id="ForActor6" logic="and"><condition id="ForActor"/><condition input="Actor6" empty="0"/></condition>
+	<condition id="ForActor7" logic="and"><condition id="ForActor"/><condition input="Actor7" empty="0"/></condition>
+	<condition id="ForActor8" logic="and"><condition id="ForActor"/><condition input="Actor8" empty="0"/></condition>
+	<condition id="ForActor9" logic="and"><condition id="ForActor"/><condition input="Actor9" empty="0"/></condition>
+	<condition id="ForActor10" logic="and"><condition id="ForActor"/><condition input="Actor10" empty="0"/></condition>
+	
+	<condition id="ForAny1" logic="or">
+		<condition id="ForUnit1"/>
+		<condition id="ForWeaponNotIcon1"/>
+		<condition id="ForEffect1"/>
+		<condition id="ForWeaponIcon1"/>
+		<condition id="ForWeaponLevel1"/>
+		<condition id="ForUnitInt1"/>
+		<condition id="ForActor1"/>
+	</condition>
+	<condition id="ForAny2" logic="or">
+		<condition id="ForUnit2"/>
+		<condition id="ForWeaponNotIcon2"/>
+		<condition id="ForEffect2"/>
+		<condition id="ForWeaponIcon2"/>
+		<condition id="ForWeaponLevel2"/>
+		<condition id="ForUnitInt2"/>
+		<condition id="ForActor2"/>
+	</condition>
+	<condition id="ForAny3" logic="or">
+		<condition id="ForUnit3"/>
+		<condition id="ForWeaponNotIcon3"/>
+		<condition id="ForEffect3"/>
+		<condition id="ForWeaponIcon3"/>
+		<condition id="ForWeaponLevel3"/>
+		<condition id="ForUnitInt3"/>
+		<condition id="ForActor3"/>
+	</condition>
+	<condition id="ForAny4" logic="or">
+		<condition id="ForUnit4"/>
+		<condition id="ForWeaponNotIcon4"/>
+		<condition id="ForEffect4"/>
+		<condition id="ForWeaponIcon4"/>
+		<condition id="ForWeaponLevel4"/>
+		<condition id="ForUnitInt4"/>
+		<condition id="ForActor4"/>
+	</condition>
+	<condition id="ForAny5" logic="or">
+		<condition id="ForUnit5"/>
+		<condition id="ForWeaponNotIcon5"/>
+		<condition id="ForEffect5"/>
+		<condition id="ForWeaponIcon5"/>
+		<condition id="ForWeaponLevel5"/>
+		<condition id="ForUnitInt5"/>
+		<condition id="ForActor5"/>
+	</condition>
+	<condition id="ForAny6" logic="or">
+		<condition id="ForUnit6"/>
+		<condition id="ForWeaponNotIcon6"/>
+		<condition id="ForEffect6"/>
+		<condition id="ForWeaponIcon6"/>
+		<condition id="ForWeaponLevel6"/>
+		<condition id="ForUnitInt6"/>
+		<condition id="ForActor6"/>
+	</condition>
+	<condition id="ForAny7" logic="or">
+		<condition id="ForUnit7"/>
+		<condition id="ForWeaponNotIcon7"/>
+		<condition id="ForEffect7"/>
+		<condition id="ForWeaponIcon7"/>
+		<condition id="ForWeaponLevel7"/>
+		<condition id="ForUnitInt7"/>
+		<condition id="ForActor7"/>
+	</condition>
+	<condition id="ForAny8" logic="or">
+		<condition id="ForUnit8"/>
+		<condition id="ForWeaponNotIcon8"/>
+		<condition id="ForEffect8"/>
+		<condition id="ForWeaponIcon8"/>
+		<condition id="ForWeaponLevel8"/>
+		<condition id="ForUnitInt8"/>
+		<condition id="ForActor8"/>
+	</condition>
+	<condition id="ForAny9" logic="or">
+		<condition id="ForUnit9"/>
+		<condition id="ForWeaponNotIcon9"/>
+		<condition id="ForEffect9"/>
+		<condition id="ForWeaponIcon9"/>
+		<condition id="ForWeaponLevel9"/>
+		<condition id="ForUnitInt9"/>
+		<condition id="ForActor9"/>
+	</condition>
+	<condition id="ForAny10" logic="or">
+		<condition id="ForUnit10"/>
+		<condition id="ForWeaponNotIcon10"/>
+		<condition id="ForEffect10"/>
+		<condition id="ForWeaponIcon10"/>
+		<condition id="ForWeaponLevel10"/>
+		<condition id="ForUnitInt10"/>
+		<condition id="ForActor10"/>
+	</condition>
+
+<!--VALIDATION-->
+	<condition id="ContainResearch" input="ResearchLink" match="contain" value="Research"/> <!--Checks if the word "Research" is somewhere in the input-->
+	<condition id="ResearchEmpty" input="ResearchLink" empty="1"/>
+	<condition id="ResearchValid"> <!--Checks that when you pick a research ability, that it actually is a "research"-->
+		<condition logic="or">
+			<condition logic="not">
+				<condition input="ResearchAbility" value="0"/>
+				<condition id="IsCreateUpgrade"/>
+			</condition>
+			<condition logic="or">
+				<condition id="ContainResearch"/>
+				<condition id="ResearchEmpty"/>	
+			</condition>
+		</condition>
+	</condition>
+
+	<!--Validates that "IsCreateUpgrade" is picked, and if an ability is picked, it must be with Research in the name-->
+    <validate type="Error">
+		<condition id="ResearchValid"/>
+        <text>Requires a "Research ability" (Ability with Research in the name) (You can ignore the warnings)</text>
+	</validate>
+
+	<validate type="Error">
+		<condition logic="or">
+			<condition logic="and">
+				<condition input="ResearchID" empty="0"/>
+				<condition id="IsCreateUpgradeAndResearch"/>
+			</condition>
+			<condition logic="not">
+				<condition id="IsCreateUpgradeAndResearch"/>
+			</condition>
+		</condition>
+		<text>Research ID must not be empty</text>
+	</validate>
+
+
+<!--PAGE 1 Column 1-->
+    <!--Instructions-->
+    <input id="Page1Instructions1" type="WizardText">
+        <default value="This Wizard is used for creating an upgrade."/>
+        <color value="255,0,76,153"/>
+    </input>
+
+	<input id="CreateUpgrade" type="WizardRadio">
+		<name>Choose if you want to create a new upgrade or modify one</name>
+		<tooltip>Using an existing upgrade will simply modify it to include new affected units amd new modifications.</tooltip>
+		<item text="Use existing upgrade" value="0"/>
+		<item text="Create a new upgrade" value="1"/>
+		<default value="0"/>
+	</input>
+	<input id="UpgradeLink" type="CUpgradeLink">
+		<name>Choose existing upgrade</name>
+		<condition id="IsExistingUpgrade"/>
+	</input>
+
+	<!--Create Upgrade-->
+	<input id="UpgName" type="CString">
+		<condition id="IsCreateUpgrade"/>
+		<name>Choose Upgrade name</name>
+		<tooltip>Choose the name of the upgrade.</tooltip>
+	</input>
+	<input id="UpgID" type="CString">
+		<condition id="IsCreateUpgrade"/>
+		<name>Choose Upgrade ID</name>
+		<tooltip>The ID is usually very similar to the name with no spaces or special character except "_"</tooltip>
+		<simpletext/>
+	</input>
+	<input id="ResearchAbility" type="WizardRadio">
+		<name>Choose if you want to create a new research ability</name>
+		<tooltip>This will create a new research ability and add the upgrade to it.</tooltip>
+		<condition id="IsCreateUpgrade"/>
+		<item text="Use existing research" value="0"/>
+		<item text="Create a new research" value="1"/>
+		<default value="0"/>
+	</input>
+	<input id="ResearchLink" type="CAbilLink">
+		<name>Choose the RESEARCH ability to add the upgrade to.</name>
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="ResearchAbility" value="0"/>
+		</condition>
+		<tooltip>The upgrade will be added to the next available slot in the research array.</tooltip>
+	</input>
+	<input id="ResearchID" type="CString">
+		<condition id="IsCreateUpgradeAndResearch"/>
+		<name>Choose Research ID</name>
+		<tooltip>This ID defines the name and ID of the research. It will be "ThisID"+"Research"</tooltip>
+		<simpletext/>
+	</input>
+
+
+	<input id="AddToUnit" type="CUnitLink">
+		<condition id="IsCreateUpgradeAndResearch"/>
+		<name>Optional: Select the unit to add the Upgrade to it</name>
+		<tooltip>Add the generated research ability with the Upgrade to the Unit</tooltip>
+	</input>
+	<input id="AddToUnitExistingResearch" type="CUnitLink">
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="ResearchAbility" value="0"/>
+		</condition>
+		<name>Optional: Select the unit that has the research</name>
+		<tooltip>This will allow to add the upgrade to the unit.</tooltip>
+	</input>
+
+	<input id="AddQueueAbil" type="WizardRadio">
+		<condition logic="and">
+			<condition id="IsCreateUpgradeAndResearch"/>
+			<condition id="UnitPicked"/>
+		</condition>
+		<name>Does the unit you picked already have a queue ability?</name>
+		<tooltip>A queue ability is the creation of slots when you buy upgrade, units, etc. and be able to cancel said queue. If the unit already have one and you say Yes, you'll get an error and have to manually remove one of the queue ability.
+		
+If you forgot to add queue ability, you can add it to the unit afterward and have to setup the cancel too in the command card.</tooltip>
+		<item text="No" value="0"/>
+		<item text="Yes" value="1"/>
+	</input>
+	<input id="AbilFlag" type="WizardRadio">
+		<condition logic="and">
+			<condition id="IsCreateUpgradeAndResearch"/>
+			<condition id="UnitPicked"/>
+		</condition>
+		<name>Can the unit move and interrupt the research?</name>
+		<tooltip>If Yes, when the unit changes order, it will cancel the research. If No, the unit will be stopped and cannot move until the ability finishes or is cancelled.
+		
+If the unit is a structure and cannot move, it might create issues if Yes. This will change the generated Research Ability's flag named "Use Unit Order Queue"</tooltip>
+		<item text="No" value="0"/>
+		<item text="Yes" value="1"/>
+	</input>
+	<input id="ResearchButton" type="CButtonLink">
+		<condition logic="or">
+			<condition logic="and">
+				<condition id="IsCreateUpgradeAndResearch"/>
+				<condition id="UnitPicked"/>
+			</condition>
+			<condition logic="and">
+				<condition id="IsCreateUpgrade"/>
+				<condition input="ResearchAbility" value="0"/>
+				<condition input="AddToUnitExistingResearch" empty="0"/>
+			</condition>
+		</condition>
+		<name>Select the Button to add to the command card of the unit.</name>
+		<tooltip>You need to select a unit to add the Button to it.</tooltip>
+	</input>
+	<input id="CCRow" type="int8">
+		<name>Command Card Row to place Button</name>
+		<tooltip>The Row is the line choice. A value of 0 will be the first line (normally countaining attack, stop, hold... buttons).
+
+A value of 1 will be the next line. And so on. Max value is 2, because there are only 3 rows.</tooltip>
+		<condition logic="or">
+			<condition logic="and">
+				<condition id="IsCreateUpgradeAndResearch"/>
+				<condition id="UnitPicked"/>
+			</condition>
+			<condition logic="and">
+				<condition id="IsCreateUpgrade"/>
+				<condition input="ResearchAbility" value="0"/>
+				<condition input="AddToUnitExistingResearch" empty="0"/>
+			</condition>
+		</condition>
+		<minimum value = "0"/>
+		<maximum value = "2"/>
+	</input>
+	<input id="CCColumn" type="int8">
+		<name>Command Card Column to place Button</name>
+		<tooltip>The Column is the left/right choice. A value of 0 will be the left most button of the row. (normally countaining attack if the first row, or stimpack if the last row).
+
+A value of 1 will be the next button going right, like Stop. And so on. Max value is 4, because there are only 5 columns.
+
+If you pick a slot that already has a button, it will just exist behind the other button. You can move it again in the command card of the unit.</tooltip>
+		<condition logic="or">
+			<condition logic="and">
+				<condition id="IsCreateUpgradeAndResearch"/>
+				<condition id="UnitPicked"/>
+			</condition>
+			<condition logic="and">
+				<condition id="IsCreateUpgrade"/>
+				<condition input="ResearchAbility" value="0"/>
+				<condition input="AddToUnitExistingResearch" empty="0"/>
+			</condition>
+		</condition>
+		<minimum value = "0"/>
+		<maximum value = "4"/>
+	</input>
+
+<!--Page 1 Column 2-->
+	<input id="Disabled" type="WizardCheckbox">
+		<name>Wizard required, don't touch</name>
+		<layout column="2"/>
+	</input>
+
+	<input id="VOffsetP1C2" type="WizardText">
+		<layout column="2" minheight="35"/>
+	</input>
+
+	<input id="CreateRequirement" type="WizardCheckbox">
+		<condition id="IsCreateUpgrade"/>
+		<name>Check to create the requirement</name>
+		<tooltip>This will create the default Learn requirement with the "Show" node set to hide once the upgrade is researched. Pick a "Have XXXXX requirement" below to add the Use node.
+
+You can also leave this unchecked and use the Requirement wizard to complete this part if you need Learn and Use requirements.
+		</tooltip>
+		<layout column="2"/>
+	</input>
+	<input id="UpgradeRequirement" type="CRequirementLink">
+		<name>Requirement to use the Upgrade</name>
+		<tooltip>This will greys out the button if the requirement is not met. Pick "Have XXXXX requirement".</tooltip>
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="CreateRequirement" value="1"/>
+		</condition>		
+		<layout column="2"/>
+	</input>
+	<input id="UpgradeIcon" type="CImagePath">
+		<condition id="IsCreateUpgrade"/>
+		<name>Select icon for the Upgrade</name>
+		<layout column="2"/>
+	</input>
+	<input id="UpgradeRace" type="CRaceLink">
+		<condition id="IsCreateUpgrade"/>
+		<name>Select race for the Upgrade</name>
+		<layout column="2"/>
+	</input>
+	<input id="UpgradeAlert" type="CAlertLink">
+		<condition id="IsCreateUpgrade"/>
+		<name>Select Alert for the Upgrade</name>
+		<tooltip>In general, the alert is Upgrade Complete or Research Complete</tooltip>
+		<layout column="2"/>
+	</input>
+	<input id="MaxLevel" type="int32">
+		<name>Number of times the upgrade can be bought</name>
+		<tooltip>This will allow to buy multiple times the same upgrade and scale the effects together.
+
+Use the Upgrade Level Cost Increment modification as the first thing to modify to have cost increases for each upgrade researched.</tooltip>
+		<condition id="IsCreateUpgrade"/>
+		<layout column="2"/>
+		<default value="1"/>
+		<minimum value="1"/>
+		<maximum value="255"/>
+	</input>
+	<input id="CostTime" type="real32">
+		<name>Time cost of the Upgrade</name>
+		<tooltip>How long will it takes to research the upgrade</tooltip>
+		<condition id="IsCreateUpgrade"/>
+		<layout column="2"/>
+		<minimum value="0"/>
+	</input>
+	<input id="CostMineral" type="int32">
+		<name>Mineral cost of the Upgrade</name>
+		<tooltip>How much will it cost in mineral to research the upgrade</tooltip>
+		<condition id="IsCreateUpgrade"/>
+		<layout column="2"/>
+	</input>
+	<input id="CostVespene" type="int32">
+		<name>Vespene cost of the Upgrade</name>
+		<tooltip>How much will it cost in vespene to research the upgrade</tooltip>
+		<condition id="IsCreateUpgrade"/>
+		<layout column="2"/>
+	</input>
+
+	<macro id="UpgradeScore">^CostMineral^+^CostVespene^</macro>
+<!--P1 Hidden inputs-->
+
+<!--Dummy inputs to get the Upgrade value at each array-->
+	<input id="ResearchArray0" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[0].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray1" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[1].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray2" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[2].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray3" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[3].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray4" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[4].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray5" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[5].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray6" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[6].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray7" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[7].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray8" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[8].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray9" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[9].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray10" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[10].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray11" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[11].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray12" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[12].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray13" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[13].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray14" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[14].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray15" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[15].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray16" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[16].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray17" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[17].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray18" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[18].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray19" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[19].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray20" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[20].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray21" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[21].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray22" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[22].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray23" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[23].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray24" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[24].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray25" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[25].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray26" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[26].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray27" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[27].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray28" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[28].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+	<input id="ResearchArray29" type="CUpgradeLink"><loadvalue>ref=Abil,^ResearchLink^,InfoArray[29].Upgrade</loadvalue><reloadfrom>ResearchLink</reloadfrom><condition id="IsDisabled"/></input>
+
+
+<!--Page 2 Column 1-->
+    <input id="Page2Instructions1" type="WizardText">
+        <default value="Choose the affected units and amount for that unit"/>
+        <color value="255,0,76,153"/>
+		<layout page="2"/>
+    </input>
+
+	<input id="Change" type="WizardMenu">
+		<name>Choose the change to add to the Upgrade</name>
+		<tooltip>If you need multiple modifications for one upgrade, you will have to re-run the Wizard again.
+		
+Choose the Unit, the Weapon, the Effect or the main unit Actor.</tooltip>
+		<layout page="2"/>
+		<item text="Unit Speed" value="Speed"/>
+		<item text="Unit Sight Radius" value="Sight"/>
+		<item text="Unit Life Armor" value="LifeArmor"/>
+		<item text="Unit Life Armor Level" value="LifeArmorLevel"/>
+		<item text="Unit Shield Armor" value="ShieldArmor"/>
+		<item text="Unit Shield Armor Level" value="ShieldArmorLevel"/>
+		<item text="Unit Life Maximum" value="LifeMax"/>
+		<item text="Unit Life Starting Amount" value="LifeStart"/>
+		<item text="Unit Life Regeneration Rate" value="LifeRegenRate"/>
+		<item text="Unit Shield Maximum" value="ShieldsMax"/>
+		<item text="Unit Shield Starting Amount" value="ShieldsStart"/>
+		<item text="Unit Shield Regeneration Rate" value="ShieldRegenRate"/>
+		<item text="Unit Energy Maximum" value="EnergyMax"/>
+		<item text="Unit Energy Starting Amount" value="EnergyStart"/>
+		<item text="Unit Energy Regeneration Rate" value="EnergyRegenRate"/>
+		<item text="Weapon Period" value="Period"/>
+		<item text="Weapon Range" value="Range"/>
+		<item text="Weapon Rate Multiplier" value="RateMultiplier"/>
+		<item text="Weapon Level" value="Level"/>
+		<item text="Set Weapon Icon" value="Icon"/>
+		<item text="Set Life Armor Icon" value="LifeArmorIcon"/>
+		<item text="Set Shield Armor Icon" value="ShieldArmorIcon"/>
+		<item text="Effect Damage" value="DefinedInDamageBonus"/>
+		<item text="Upgrade Level Cost Increment" value="UpgradeCost"/>
+	</input>
+
+	<input id="IncCostTime" type="real32">
+		<name>Increase Time cost after each time you buy the Upgrade</name>
+		<tooltip>How much longer does it takes to research the next upgrade. Note queued upgrades are a little buggy.</tooltip>
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="Change" value="UpgradeCost"/>
+		</condition>
+		<layout page="2"/>
+		<minimum value="0"/>
+	</input>
+	<input id="IncCostMineral" type="int32">
+		<name>Increase Mineral cost after each time you buy the Upgrade</name>
+		<tooltip>How much more will it cost in mineral to research the next upgrade. Note queued upgrades are a little buggy.</tooltip>
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="Change" value="UpgradeCost"/>
+		</condition>
+		<layout page="2"/>
+	</input>
+	<input id="IncCostVespene" type="int32">
+		<name>Increase Vespene cost after each time you buy the Upgrade</name>
+		<tooltip>How much more will it cost in vespene to research the next upgrade. Note queued upgrades are a little buggy.</tooltip>
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="Change" value="UpgradeCost"/>
+		</condition>
+		<layout page="2"/>
+	</input>
+
+	<!--Create a bunch of links for affected UNITS-->
+	<input id="Unit1" type="CUnitLink"><condition id="ForUnit"/><layout page="2"/></input>
+	<input id="Unit2" type="CUnitLink"><condition id="ForUnit"/><layout page="2"/></input>
+	<input id="Unit3" type="CUnitLink"><condition id="ForUnit"/><layout page="2"/></input>
+	<input id="Unit4" type="CUnitLink"><condition id="ForUnit"/><layout page="2"/></input>
+	<input id="Unit5" type="CUnitLink"><condition id="ForUnit"/><layout page="2"/></input>
+	<input id="Unit6" type="CUnitLink"><condition id="ForUnit"/><layout page="2"/></input>
+	<input id="Unit7" type="CUnitLink"><condition id="ForUnit"/><layout page="2"/></input>
+	<input id="Unit8" type="CUnitLink"><condition id="ForUnit"/><layout page="2"/></input>
+	<input id="Unit9" type="CUnitLink"><condition id="ForUnit"/><layout page="2"/></input>
+	<input id="Unit10" type="CUnitLink"><condition id="ForUnit"/><layout page="2" minheight="50"/></input>
+
+	<!--Create a bunch of links for affected WEAPONS-->
+	<input id="Weapon1" type="CWeaponLink"><condition id="ForWeaponOrIcon"/><layout page="2"/></input>
+	<input id="Weapon2" type="CWeaponLink"><condition id="ForWeaponOrIcon"/><layout page="2"/></input>
+	<input id="Weapon3" type="CWeaponLink"><condition id="ForWeaponOrIcon"/><layout page="2"/></input>
+	<input id="Weapon4" type="CWeaponLink"><condition id="ForWeaponOrIcon"/><layout page="2"/></input>
+	<input id="Weapon5" type="CWeaponLink"><condition id="ForWeaponOrIcon"/><layout page="2"/></input>
+	<input id="Weapon6" type="CWeaponLink"><condition id="ForWeaponOrIcon"/><layout page="2"/></input>
+	<input id="Weapon7" type="CWeaponLink"><condition id="ForWeaponOrIcon"/><layout page="2"/></input>
+	<input id="Weapon8" type="CWeaponLink"><condition id="ForWeaponOrIcon"/><layout page="2"/></input>
+	<input id="Weapon9" type="CWeaponLink"><condition id="ForWeaponOrIcon"/><layout page="2"/></input>
+	<input id="Weapon10" type="CWeaponLink"><condition id="ForWeaponOrIcon"/><layout page="2" minheight="50"/></input>
+
+	<!--Create a bunch of links for affected ACTOR-->
+	<input id="Actor1" type="CActorLink"><condition id="ForActor"/><layout page="2"/></input>
+	<input id="Actor2" type="CActorLink"><condition id="ForActor"/><layout page="2"/></input>
+	<input id="Actor3" type="CActorLink"><condition id="ForActor"/><layout page="2"/></input>
+	<input id="Actor4" type="CActorLink"><condition id="ForActor"/><layout page="2"/></input>
+	<input id="Actor5" type="CActorLink"><condition id="ForActor"/><layout page="2"/></input>
+	<input id="Actor6" type="CActorLink"><condition id="ForActor"/><layout page="2"/></input>
+	<input id="Actor7" type="CActorLink"><condition id="ForActor"/><layout page="2"/></input>
+	<input id="Actor8" type="CActorLink"><condition id="ForActor"/><layout page="2"/></input>
+	<input id="Actor9" type="CActorLink"><condition id="ForActor"/><layout page="2"/></input>
+	<input id="Actor10" type="CActorLink"><condition id="ForActor"/><layout page="2" minheight="50"/></input>
+
+	<!--Create a bunch of links for affected EFFECT-->
+	<input id="Effect1" type="CEffectLink"><condition id="ForEffect"/><layout page="2"/></input>
+	<input id="Effect2" type="CEffectLink"><condition id="ForEffect"/><layout page="2"/></input>
+	<input id="Effect3" type="CEffectLink"><condition id="ForEffect"/><layout page="2"/></input>
+	<input id="Effect4" type="CEffectLink"><condition id="ForEffect"/><layout page="2"/></input>
+	<input id="Effect5" type="CEffectLink"><condition id="ForEffect"/><layout page="2"/></input>
+	<input id="Effect6" type="CEffectLink"><condition id="ForEffect"/><layout page="2"/></input>
+	<input id="Effect7" type="CEffectLink"><condition id="ForEffect"/><layout page="2"/></input>
+	<input id="Effect8" type="CEffectLink"><condition id="ForEffect"/><layout page="2"/></input>
+	<input id="Effect9" type="CEffectLink"><condition id="ForEffect"/><layout page="2"/></input>
+	<input id="Effect10" type="CEffectLink"><condition id="ForEffect"/><layout page="2" minheight="50"/></input>
+
+	<!--Show Bonus Damage if it's Effect-->
+	<input id="DamageBonus" type="WizardMenu">
+		<condition id="ForEffect"/>
+		<name>Define the type of damage</name>
+		<tooltip>You choosed to modify the Damage. Do you want to modify the base damage or the Bonus damage against an attribute?</tooltip>
+		<layout page="2"/>
+		<item text="Basic Damage" value="Amount"/>
+		<item text="Bonus Armored" value="AttributeBonus[Armored]"/>
+		<item text="Bonus Biological" value="AttributeBonus[Biological]"/>
+		<item text="Bonus Structure" value="AttributeBonus[Structure]"/>
+		<item text="Bonus Mechanical" value="AttributeBonus[Mechanical]"/>
+		<item text="Bonus Psionic" value="AttributeBonus[Psionic]"/>
+		<item text="Bonus Robotic" value="AttributeBonus[Robotic]"/>
+		<item text="Bonus Light" value="AttributeBonus[Light]"/>
+		<item text="Bonus Massive" value="AttributeBonus[Massive]"/>
+		<item text="Bonus Heroic" value="AttributeBonus[Heroic]"/>
+	</input>
+	<!--Show Weapon Icon if its Set Weapon Icon-->
+	<input id="WeaponIcon" type="CImagePath">
+		<condition input="Change" value="Icon"/>
+		<name>Choose the icon to set</name>
+		<layout page="2"/>
+	</input>
+	<input id="ActorIcon" type="CImagePath">
+		<condition logic="or">
+			<condition input="Change" value="LifeArmorIcon"/>
+			<condition input="Change" value="ShieldArmorIcon"/>
+		</condition>
+		<name>Choose the icon to set</name>
+		<layout page="2"/>
+	</input>
+    <input id="Page2Instructions2" type="WizardText">
+        <default value="Warning: DO NOT leave gap between inputs. Start from top to bottom"/>
+        <color value="255,255,0,0"/>
+		<layout page="2"/>
+    </input>
+	<input id="EffectLimit" type="int32">
+		<condition id="IsExistingUpgrade"/>
+		<name>Do not exceed 129 effect changes limit. See tooltip. Currently at:</name>
+		<tooltip>The actual limit is around 255. But if you want to modify the upgrade, you will need to edit the xml whereas if you stay below 129 you can use the GUI to edit it.</tooltip>
+		<loadvalue>ref=Upgrade,^UpgradeLink^,EffectArray#</loadvalue>
+		<reloadfrom>UpgradeLink</reloadfrom>
+		<layout page="2"/>
+	</input>
+
+<!--Page 2 Column 2-->
+	<input id="VOffset1" type="WizardText">
+		<layout page="2" column="2" minheight="20"/>
+	</input>
+	<input id="Operation" type="WizardMenu">
+		<condition id="NotIcon"/>
+		<name>Choose the operation</name>
+		<tooltip>This is how you want the upgrade to affect the values. Use Set to change the weapon icon</tooltip>
+		<layout page="2" column="2"/>
+		<item text="Add" value="Add"/>
+		<item text="Subtract" value="Subtract"/>
+		<item text="Multiply" value="Multiply"/>
+		<item text="Divide" value="Divide"/>
+		<item text="Set" value="Set"/>
+	</input>
+	<!--Create a bunch of amount for affected unit-->
+	<input id="Amount1" type="real32"><condition id="ForReal"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount2" type="real32"><condition id="ForReal"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount3" type="real32"><condition id="ForReal"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount4" type="real32"><condition id="ForReal"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount5" type="real32"><condition id="ForReal"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount6" type="real32"><condition id="ForReal"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount7" type="real32"><condition id="ForReal"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount8" type="real32"><condition id="ForReal"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount9" type="real32"><condition id="ForReal"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount10" type="real32"><condition id="ForReal"/><layout page="2" column="2" minheight="25"/></input>
+
+	<!--Create a bunch of amount for affected unit-->
+	<input id="Amount1int" type="int32"><condition id="ForInt"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount2int" type="int32"><condition id="ForInt"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount3int" type="int32"><condition id="ForInt"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount4int" type="int32"><condition id="ForInt"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount5int" type="int32"><condition id="ForInt"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount6int" type="int32"><condition id="ForInt"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount7int" type="int32"><condition id="ForInt"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount8int" type="int32"><condition id="ForInt"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount9int" type="int32"><condition id="ForInt"/><layout page="2" column="2" minheight="25"/></input>
+	<input id="Amount10int" type="int32"><condition id="ForInt"/><layout page="2" column="2" minheight="25"/></input>
+
+<!--Entry Start-->
+	<input id="ChangeCount" type="int32">
+		<condition id="IsDisabled"/>
+		<loadvalue>ref=Upgrade,^UpgradeLink^,EffectArray#</loadvalue>
+		<reloadfrom>UpgradeLink</reloadfrom>
+		<layout page="2"/>
+	</input>
+
+	<macro id="CC0">^ChangeCount^ + 0</macro>
+    <macro id="CC1">^ChangeCount^ + 1</macro>
+	<macro id="CC2">^ChangeCount^ + 2</macro>
+	<macro id="CC3">^ChangeCount^ + 3</macro>
+	<macro id="CC4">^ChangeCount^ + 4</macro>
+	<macro id="CC5">^ChangeCount^ + 5</macro>
+	<macro id="CC6">^ChangeCount^ + 6</macro>
+	<macro id="CC7">^ChangeCount^ + 7</macro>
+	<macro id="CC8">^ChangeCount^ + 8</macro>
+	<macro id="CC9">^ChangeCount^ + 9</macro>
+
+<!--Existing Upgrade-->
+
+
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgradeLink^</id>
+		<condition id="IsExistingUpgrade"/>
+		<allowmodify/>
+	<!--For CC0-->
+		<field id="EffectArray_Reference"><index>^CC0^</index><value>Unit,^Unit1^,^Change^</value>		<condition id="ForUnit1"/></field>
+		<field id="EffectArray_Operation"><index>^CC0^</index><value>^Operation^</value>		  		<condition id="ForUnit1"/></field>
+		<field id="EffectArray_Value">	  <index>^CC0^</index><value>^Amount1^</value>			  		<condition id="ForUnit1"/></field>
+		<field id="EffectArray_Reference"><index>^CC0^</index><value>Weapon,^Weapon1^,^Change^</value>	<condition id="ForWeaponNotIcon1"/></field>
+		<field id="EffectArray_Operation"><index>^CC0^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon1"/></field>
+		<field id="EffectArray_Value">	  <index>^CC0^</index><value>^Amount1^</value>			  		<condition id="ForWeaponNotIcon1"/></field>
+		<field id="EffectArray_Reference"><index>^CC0^</index><value>Effect,^Effect1^,^DamageBonus^</value>	<condition id="ForEffect1"/></field>
+		<field id="EffectArray_Operation"><index>^CC0^</index><value>^Operation^</value>		  		<condition id="ForEffect1"/></field>
+		<field id="EffectArray_Value">	  <index>^CC0^</index><value>^Amount1^</value>			  		<condition id="ForEffect1"/></field>
+		<field id="EffectArray_Reference"><index>^CC0^</index><value>Weapon,^Weapon1^,^Change^</value>	<condition id="ForWeaponIcon1"/></field>
+		<field id="EffectArray_Operation"><index>^CC0^</index><value>Set</value>		  				<condition id="ForWeaponIcon1"/></field>
+		<field id="EffectArray_Value">	  <index>^CC0^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon1"/></field>
+		<field id="EffectArray_Reference"><index>^CC0^</index><value>Weapon,^Weapon1^,^Change^</value>	<condition id="ForWeaponLevel1"/></field>
+		<field id="EffectArray_Operation"><index>^CC0^</index><value>^Operation^</value>				<condition id="ForWeaponLevel1"/></field>
+		<field id="EffectArray_Value">	  <index>^CC0^</index><value>^Amount1int^</value>			  	<condition id="ForWeaponLevel1"/></field>
+		<field id="EffectArray_Reference"><index>^CC0^</index><value>Unit,^Unit1^,^Change^</value>		<condition id="ForUnitInt1"/></field>
+		<field id="EffectArray_Operation"><index>^CC0^</index><value>^Operation^</value>		  		<condition id="ForUnitInt1"/></field>
+		<field id="EffectArray_Value">	  <index>^CC0^</index><value>^Amount1int^</value>			  	<condition id="ForUnitInt1"/></field>
+		<field id="EffectArray_Reference"><index>^CC0^</index><value>Actor,^Actor1^,^Change^</value>	<condition id="ForActor1"></condition></field>
+		<field id="EffectArray_Operation"><index>^CC0^</index><value>Set</value>		  				<condition id="ForActor1"></condition></field>
+		<field id="EffectArray_Value">	  <index>^CC0^</index><value>^ActorIcon^</value>			  	<condition id="ForActor1"></condition></field>
+	</entry>
+	<!--For CC1-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgradeLink^</id>
+		<condition id="IsExistingUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^CC1^</index><value>Unit,^Unit2^,^Change^</value>		<condition id="ForUnit2"/></field>
+		<field id="EffectArray_Operation"><index>^CC1^</index><value>^Operation^</value>		  		<condition id="ForUnit2"/></field>
+		<field id="EffectArray_Value">	  <index>^CC1^</index><value>^Amount2^</value>			  		<condition id="ForUnit2"/></field>
+		<field id="EffectArray_Reference"><index>^CC1^</index><value>Weapon,^Weapon2^,^Change^</value>	<condition id="ForWeaponNotIcon2"/></field>
+		<field id="EffectArray_Operation"><index>^CC1^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon2"/></field>
+		<field id="EffectArray_Value">	  <index>^CC1^</index><value>^Amount2^</value>			  		<condition id="ForWeaponNotIcon2"/></field>
+		<field id="EffectArray_Reference"><index>^CC1^</index><value>Effect,^Effect2^,^DamageBonus^</value>	<condition id="ForEffect2"/></field>
+		<field id="EffectArray_Operation"><index>^CC1^</index><value>^Operation^</value>		  		<condition id="ForEffect2"/></field>
+		<field id="EffectArray_Value">	  <index>^CC1^</index><value>^Amount2^</value>			  		<condition id="ForEffect2"/></field>
+		<field id="EffectArray_Reference"><index>^CC1^</index><value>Weapon,^Weapon2^,^Change^</value>	<condition id="ForWeaponIcon2"/></field>
+		<field id="EffectArray_Operation"><index>^CC1^</index><value>Set</value>		  				<condition id="ForWeaponIcon2"/></field>
+		<field id="EffectArray_Value">	  <index>^CC1^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon2"/></field>
+		<field id="EffectArray_Reference"><index>^CC1^</index><value>Weapon,^Weapon2^,^Change^</value>	<condition id="ForWeaponLevel2"/></field>
+		<field id="EffectArray_Operation"><index>^CC1^</index><value>^Operation^</value>				<condition id="ForWeaponLevel2"/></field>
+		<field id="EffectArray_Value">	  <index>^CC1^</index><value>^Amount2int^</value>			  	<condition id="ForWeaponLevel2"/></field>
+		<field id="EffectArray_Reference"><index>^CC1^</index><value>Unit,^Unit2^,^Change^</value>		<condition id="ForUnitInt2"/></field>
+		<field id="EffectArray_Operation"><index>^CC1^</index><value>^Operation^</value>		  		<condition id="ForUnitInt2"/></field>
+		<field id="EffectArray_Value">	  <index>^CC1^</index><value>^Amount2int^</value>			  	<condition id="ForUnitInt2"/></field>
+		<field id="EffectArray_Reference"><index>^CC1^</index><value>Actor,^Actor2^,^Change^</value>	<condition id="ForActor2"/></field>
+		<field id="EffectArray_Operation"><index>^CC1^</index><value>Set</value>		  				<condition id="ForActor2"/></field>
+		<field id="EffectArray_Value">	  <index>^CC1^</index><value>^ActorIcon^</value>			  	<condition id="ForActor2"/></field>
+	</entry>
+	<!--For CC2-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgradeLink^</id>
+		<condition id="IsExistingUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^CC2^</index><value>Unit,^Unit3^,^Change^</value>		<condition id="ForUnit3"/></field>
+		<field id="EffectArray_Operation"><index>^CC2^</index><value>^Operation^</value>		  		<condition id="ForUnit3"/></field>
+		<field id="EffectArray_Value">	  <index>^CC2^</index><value>^Amount3^</value>			  		<condition id="ForUnit3"/></field>
+		<field id="EffectArray_Reference"><index>^CC2^</index><value>Weapon,^Weapon3^,^Change^</value>	<condition id="ForWeaponNotIcon3"/></field>
+		<field id="EffectArray_Operation"><index>^CC2^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon3"/></field>
+		<field id="EffectArray_Value">	  <index>^CC2^</index><value>^Amount3^</value>			  		<condition id="ForWeaponNotIcon3"/></field>
+		<field id="EffectArray_Reference"><index>^CC2^</index><value>Effect,^Effect3^,^DamageBonus^</value>	<condition id="ForEffect3"/></field>
+		<field id="EffectArray_Operation"><index>^CC2^</index><value>^Operation^</value>		  		<condition id="ForEffect3"/></field>
+		<field id="EffectArray_Value">	  <index>^CC2^</index><value>^Amount3^</value>			  		<condition id="ForEffect3"/></field>
+		<field id="EffectArray_Reference"><index>^CC2^</index><value>Weapon,^Weapon3^,^Change^</value>	<condition id="ForWeaponIcon3"/></field>
+		<field id="EffectArray_Operation"><index>^CC2^</index><value>Set</value>		  				<condition id="ForWeaponIcon3"/></field>
+		<field id="EffectArray_Value">	  <index>^CC2^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon3"/></field>
+		<field id="EffectArray_Reference"><index>^CC2^</index><value>Weapon,^Weapon3^,^Change^</value>	<condition id="ForWeaponLevel3"/></field>
+		<field id="EffectArray_Operation"><index>^CC2^</index><value>^Operation^</value>				<condition id="ForWeaponLevel3"/></field>
+		<field id="EffectArray_Value">	  <index>^CC2^</index><value>^Amount3int^</value>			  	<condition id="ForWeaponLevel3"/></field>
+		<field id="EffectArray_Reference"><index>^CC2^</index><value>Unit,^Unit3^,^Change^</value>		<condition id="ForUnitInt3"/></field>
+		<field id="EffectArray_Operation"><index>^CC2^</index><value>^Operation^</value>		  		<condition id="ForUnitInt3"/></field>
+		<field id="EffectArray_Value">	  <index>^CC2^</index><value>^Amount3int^</value>			  	<condition id="ForUnitInt3"/></field>
+		<field id="EffectArray_Reference"><index>^CC2^</index><value>Actor,^Actor3^,^Change^</value>	<condition id="ForActor3"/></field>
+		<field id="EffectArray_Operation"><index>^CC2^</index><value>Set</value>		  				<condition id="ForActor3"/></field>
+		<field id="EffectArray_Value">	  <index>^CC2^</index><value>^ActorIcon^</value>			  	<condition id="ForActor3"/></field>
+	</entry>
+	<!--For CC3-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgradeLink^</id>
+		<condition id="IsExistingUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^CC3^</index><value>Unit,^Unit4^,^Change^</value>		<condition id="ForUnit4"/></field>
+		<field id="EffectArray_Operation"><index>^CC3^</index><value>^Operation^</value>		  		<condition id="ForUnit4"/></field>
+		<field id="EffectArray_Value">	  <index>^CC3^</index><value>^Amount4^</value>			  		<condition id="ForUnit4"/></field>
+		<field id="EffectArray_Reference"><index>^CC3^</index><value>Weapon,^Weapon4^,^Change^</value>	<condition id="ForWeaponNotIcon4"/></field>
+		<field id="EffectArray_Operation"><index>^CC3^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon4"/></field>
+		<field id="EffectArray_Value">	  <index>^CC3^</index><value>^Amount4^</value>			  		<condition id="ForWeaponNotIcon4"/></field>
+		<field id="EffectArray_Reference"><index>^CC3^</index><value>Effect,^Effect4^,^DamageBonus^</value>	<condition id="ForEffect4"/></field>
+		<field id="EffectArray_Operation"><index>^CC3^</index><value>^Operation^</value>		  		<condition id="ForEffect4"/></field>
+		<field id="EffectArray_Value">	  <index>^CC3^</index><value>^Amount4^</value>			  		<condition id="ForEffect4"/></field>
+		<field id="EffectArray_Reference"><index>^CC3^</index><value>Weapon,^Weapon4^,^Change^</value>	<condition id="ForWeaponIcon4"/></field>
+		<field id="EffectArray_Operation"><index>^CC3^</index><value>Set</value>		  				<condition id="ForWeaponIcon4"/></field>
+		<field id="EffectArray_Value">	  <index>^CC3^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon4"/></field>
+		<field id="EffectArray_Reference"><index>^CC3^</index><value>Weapon,^Weapon4^,^Change^</value>	<condition id="ForWeaponLevel4"/></field>
+		<field id="EffectArray_Operation"><index>^CC3^</index><value>^Operation^</value>				<condition id="ForWeaponLevel4"/></field>
+		<field id="EffectArray_Value">	  <index>^CC3^</index><value>^Amount4int^</value>			  	<condition id="ForWeaponLevel4"/></field>
+		<field id="EffectArray_Reference"><index>^CC3^</index><value>Unit,^Unit4^,^Change^</value>		<condition id="ForUnitInt4"/></field>
+		<field id="EffectArray_Operation"><index>^CC3^</index><value>^Operation^</value>		  		<condition id="ForUnitInt4"/></field>
+		<field id="EffectArray_Value">	  <index>^CC3^</index><value>^Amount4int^</value>			  	<condition id="ForUnitInt4"/></field>
+		<field id="EffectArray_Reference"><index>^CC3^</index><value>Actor,^Actor4^,^Change^</value>	<condition id="ForActor4"/></field>
+		<field id="EffectArray_Operation"><index>^CC3^</index><value>Set</value>		  				<condition id="ForActor4"/></field>
+		<field id="EffectArray_Value">	  <index>^CC3^</index><value>^ActorIcon^</value>			  	<condition id="ForActor4"/></field>
+	</entry>
+	<!--For CC4-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgradeLink^</id>
+		<condition id="IsExistingUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^CC4^</index><value>Unit,^Unit5^,^Change^</value>		<condition id="ForUnit5"/></field>
+		<field id="EffectArray_Operation"><index>^CC4^</index><value>^Operation^</value>		  		<condition id="ForUnit5"/></field>
+		<field id="EffectArray_Value">	  <index>^CC4^</index><value>^Amount5^</value>			  		<condition id="ForUnit5"/></field>
+		<field id="EffectArray_Reference"><index>^CC4^</index><value>Weapon,^Weapon5^,^Change^</value>	<condition id="ForWeaponNotIcon5"/></field>
+		<field id="EffectArray_Operation"><index>^CC4^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon5"/></field>
+		<field id="EffectArray_Value">	  <index>^CC4^</index><value>^Amount5^</value>			  		<condition id="ForWeaponNotIcon5"/></field>
+		<field id="EffectArray_Reference"><index>^CC4^</index><value>Effect,^Effect5^,^DamageBonus^</value>	<condition id="ForEffect5"/></field>
+		<field id="EffectArray_Operation"><index>^CC4^</index><value>^Operation^</value>		  		<condition id="ForEffect5"/></field>
+		<field id="EffectArray_Value">	  <index>^CC4^</index><value>^Amount5^</value>			  		<condition id="ForEffect5"/></field>
+		<field id="EffectArray_Reference"><index>^CC4^</index><value>Weapon,^Weapon5^,^Change^</value>	<condition id="ForWeaponIcon5"/></field>
+		<field id="EffectArray_Operation"><index>^CC4^</index><value>Set</value>		  				<condition id="ForWeaponIcon5"/></field>
+		<field id="EffectArray_Value">	  <index>^CC4^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon5"/></field>
+		<field id="EffectArray_Reference"><index>^CC4^</index><value>Weapon,^Weapon5^,^Change^</value>	<condition id="ForWeaponLevel5"/></field>
+		<field id="EffectArray_Operation"><index>^CC4^</index><value>^Operation^</value>				<condition id="ForWeaponLevel5"/></field>
+		<field id="EffectArray_Value">	  <index>^CC4^</index><value>^Amount5int^</value>			  	<condition id="ForWeaponLevel5"/></field>
+		<field id="EffectArray_Reference"><index>^CC4^</index><value>Unit,^Unit5^,^Change^</value>		<condition id="ForUnitInt5"/></field>
+		<field id="EffectArray_Operation"><index>^CC4^</index><value>^Operation^</value>		  		<condition id="ForUnitInt5"/></field>
+		<field id="EffectArray_Value">	  <index>^CC4^</index><value>^Amount5int^</value>			  	<condition id="ForUnitInt5"/></field>
+		<field id="EffectArray_Reference"><index>^CC4^</index><value>Actor,^Actor5^,^Change^</value>	<condition id="ForActor5"/></field>
+		<field id="EffectArray_Operation"><index>^CC4^</index><value>Set</value>		  				<condition id="ForActor5"/></field>
+		<field id="EffectArray_Value">	  <index>^CC4^</index><value>^ActorIcon^</value>			  	<condition id="ForActor5"/></field>
+	</entry>
+	<!--For CC5-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgradeLink^</id>
+		<condition id="IsExistingUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^CC5^</index><value>Unit,^Unit6^,^Change^</value>		<condition id="ForUnit6"/></field>
+		<field id="EffectArray_Operation"><index>^CC5^</index><value>^Operation^</value>		  		<condition id="ForUnit6"/></field>
+		<field id="EffectArray_Value">	  <index>^CC5^</index><value>^Amount6^</value>			  		<condition id="ForUnit6"/></field>
+		<field id="EffectArray_Reference"><index>^CC5^</index><value>Weapon,^Weapon6^,^Change^</value>	<condition id="ForWeaponNotIcon6"/></field>
+		<field id="EffectArray_Operation"><index>^CC5^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon6"/></field>
+		<field id="EffectArray_Value">	  <index>^CC5^</index><value>^Amount6^</value>			  		<condition id="ForWeaponNotIcon6"/></field>
+		<field id="EffectArray_Reference"><index>^CC5^</index><value>Effect,^Effect6^,^DamageBonus^</value>	<condition id="ForEffect6"/></field>
+		<field id="EffectArray_Operation"><index>^CC5^</index><value>^Operation^</value>		  		<condition id="ForEffect6"/></field>
+		<field id="EffectArray_Value">	  <index>^CC5^</index><value>^Amount6^</value>			  		<condition id="ForEffect6"/></field>
+		<field id="EffectArray_Reference"><index>^CC5^</index><value>Weapon,^Weapon6^,^Change^</value>	<condition id="ForWeaponIcon6"/></field>
+		<field id="EffectArray_Operation"><index>^CC5^</index><value>Set</value>		  				<condition id="ForWeaponIcon6"/></field>
+		<field id="EffectArray_Value">	  <index>^CC5^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon6"/></field>
+		<field id="EffectArray_Reference"><index>^CC5^</index><value>Weapon,^Weapon6^,^Change^</value>	<condition id="ForWeaponLevel6"/></field>
+		<field id="EffectArray_Operation"><index>^CC5^</index><value>^Operation^</value>				<condition id="ForWeaponLevel6"/></field>
+		<field id="EffectArray_Value">	  <index>^CC5^</index><value>^Amount6int^</value>			  	<condition id="ForWeaponLevel6"/></field>
+		<field id="EffectArray_Reference"><index>^CC5^</index><value>Unit,^Unit6^,^Change^</value>		<condition id="ForUnitInt6"/></field>
+		<field id="EffectArray_Operation"><index>^CC5^</index><value>^Operation^</value>		  		<condition id="ForUnitInt6"/></field>
+		<field id="EffectArray_Value">	  <index>^CC5^</index><value>^Amount6int^</value>			  	<condition id="ForUnitInt6"/></field>
+		<field id="EffectArray_Reference"><index>^CC5^</index><value>Actor,^Actor6^,^Change^</value>	<condition id="ForActor6"/></field>
+		<field id="EffectArray_Operation"><index>^CC5^</index><value>Set</value>		  				<condition id="ForActor6"/></field>
+		<field id="EffectArray_Value">	  <index>^CC5^</index><value>^ActorIcon^</value>			  	<condition id="ForActor6"/></field>
+	</entry>
+	<!--For CC6-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgradeLink^</id>
+		<condition id="IsExistingUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^CC6^</index><value>Unit,^Unit7^,^Change^</value>		<condition id="ForUnit7"/></field>
+		<field id="EffectArray_Operation"><index>^CC6^</index><value>^Operation^</value>		  		<condition id="ForUnit7"/></field>
+		<field id="EffectArray_Value">	  <index>^CC6^</index><value>^Amount7^</value>			  		<condition id="ForUnit7"/></field>
+		<field id="EffectArray_Reference"><index>^CC6^</index><value>Weapon,^Weapon7^,^Change^</value>	<condition id="ForWeaponNotIcon7"/></field>
+		<field id="EffectArray_Operation"><index>^CC6^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon7"/></field>
+		<field id="EffectArray_Value">	  <index>^CC6^</index><value>^Amount7^</value>			  		<condition id="ForWeaponNotIcon7"/></field>
+		<field id="EffectArray_Reference"><index>^CC6^</index><value>Effect,^Effect7^,^DamageBonus^</value>	<condition id="ForEffect7"/></field>
+		<field id="EffectArray_Operation"><index>^CC6^</index><value>^Operation^</value>		  		<condition id="ForEffect7"/></field>
+		<field id="EffectArray_Value">	  <index>^CC6^</index><value>^Amount7^</value>			  		<condition id="ForEffect7"/></field>
+		<field id="EffectArray_Reference"><index>^CC6^</index><value>Weapon,^Weapon7^,^Change^</value>	<condition id="ForWeaponIcon7"/></field>
+		<field id="EffectArray_Operation"><index>^CC6^</index><value>Set</value>		  				<condition id="ForWeaponIcon7"/></field>
+		<field id="EffectArray_Value">	  <index>^CC6^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon7"/></field>
+		<field id="EffectArray_Reference"><index>^CC6^</index><value>Weapon,^Weapon7^,^Change^</value>	<condition id="ForWeaponLevel7"/></field>
+		<field id="EffectArray_Operation"><index>^CC6^</index><value>^Operation^</value>				<condition id="ForWeaponLevel7"/></field>
+		<field id="EffectArray_Value">	  <index>^CC6^</index><value>^Amount7int^</value>			  	<condition id="ForWeaponLevel7"/></field>
+		<field id="EffectArray_Reference"><index>^CC6^</index><value>Unit,^Unit7^,^Change^</value>		<condition id="ForUnitInt7"/></field>
+		<field id="EffectArray_Operation"><index>^CC6^</index><value>^Operation^</value>		  		<condition id="ForUnitInt7"/></field>
+		<field id="EffectArray_Value">	  <index>^CC6^</index><value>^Amount7int^</value>			  	<condition id="ForUnitInt7"/></field>
+		<field id="EffectArray_Reference"><index>^CC6^</index><value>Actor,^Actor7^,^Change^</value>	<condition id="ForActor7"/></field>
+		<field id="EffectArray_Operation"><index>^CC6^</index><value>Set</value>		  				<condition id="ForActor7"/></field>
+		<field id="EffectArray_Value">	  <index>^CC6^</index><value>^ActorIcon^</value>			  	<condition id="ForActor7"/></field>
+	</entry>
+	<!--For CC7-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgradeLink^</id>
+		<condition id="IsExistingUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^CC7^</index><value>Unit,^Unit8^,^Change^</value>		<condition id="ForUnit8"/></field>
+		<field id="EffectArray_Operation"><index>^CC7^</index><value>^Operation^</value>		  		<condition id="ForUnit8"/></field>
+		<field id="EffectArray_Value">	  <index>^CC7^</index><value>^Amount8^</value>			  		<condition id="ForUnit8"/></field>
+		<field id="EffectArray_Reference"><index>^CC7^</index><value>Weapon,^Weapon8^,^Change^</value>	<condition id="ForWeaponNotIcon8"/></field>
+		<field id="EffectArray_Operation"><index>^CC7^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon8"/></field>
+		<field id="EffectArray_Value">	  <index>^CC7^</index><value>^Amount8^</value>			  		<condition id="ForWeaponNotIcon8"/></field>
+		<field id="EffectArray_Reference"><index>^CC7^</index><value>Effect,^Effect8^,^DamageBonus^</value>	<condition id="ForEffect8"/></field>
+		<field id="EffectArray_Operation"><index>^CC7^</index><value>^Operation^</value>		  		<condition id="ForEffect8"/></field>
+		<field id="EffectArray_Value">	  <index>^CC7^</index><value>^Amount8^</value>			  		<condition id="ForEffect8"/></field>
+		<field id="EffectArray_Reference"><index>^CC7^</index><value>Weapon,^Weapon8^,^Change^</value>	<condition id="ForWeaponIcon8"/></field>
+		<field id="EffectArray_Operation"><index>^CC7^</index><value>Set</value>		  				<condition id="ForWeaponIcon8"/></field>
+		<field id="EffectArray_Value">	  <index>^CC7^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon8"/></field>
+		<field id="EffectArray_Reference"><index>^CC7^</index><value>Weapon,^Weapon8^,^Change^</value>	<condition id="ForWeaponLevel8"/></field>
+		<field id="EffectArray_Operation"><index>^CC7^</index><value>^Operation^</value>				<condition id="ForWeaponLevel8"/></field>
+		<field id="EffectArray_Value">	  <index>^CC7^</index><value>^Amount8int^</value>			  	<condition id="ForWeaponLevel8"/></field>
+		<field id="EffectArray_Reference"><index>^CC7^</index><value>Unit,^Unit8^,^Change^</value>		<condition id="ForUnitInt8"/></field>
+		<field id="EffectArray_Operation"><index>^CC7^</index><value>^Operation^</value>		  		<condition id="ForUnitInt8"/></field>
+		<field id="EffectArray_Value">	  <index>^CC7^</index><value>^Amount8int^</value>			  	<condition id="ForUnitInt8"/></field>
+		<field id="EffectArray_Reference"><index>^CC7^</index><value>Actor,^Actor8^,^Change^</value>	<condition id="ForActor8"/></field>
+		<field id="EffectArray_Operation"><index>^CC7^</index><value>Set</value>		  				<condition id="ForActor8"/></field>
+		<field id="EffectArray_Value">	  <index>^CC7^</index><value>^ActorIcon^</value>			  	<condition id="ForActor8"/></field>
+	</entry>
+	<!--For CC8-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgradeLink^</id>
+		<condition id="IsExistingUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^CC8^</index><value>Unit,^Unit9^,^Change^</value>		<condition id="ForUnit9"/></field>
+		<field id="EffectArray_Operation"><index>^CC8^</index><value>^Operation^</value>		  		<condition id="ForUnit9"/></field>
+		<field id="EffectArray_Value">	  <index>^CC8^</index><value>^Amount9^</value>			  		<condition id="ForUnit9"/></field>
+		<field id="EffectArray_Reference"><index>^CC8^</index><value>Weapon,^Weapon9^,^Change^</value>	<condition id="ForWeaponNotIcon9"/></field>
+		<field id="EffectArray_Operation"><index>^CC8^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon9"/></field>
+		<field id="EffectArray_Value">	  <index>^CC8^</index><value>^Amount9^</value>			  		<condition id="ForWeaponNotIcon9"/></field>
+		<field id="EffectArray_Reference"><index>^CC8^</index><value>Effect,^Effect9^,^DamageBonus^</value>	<condition id="ForEffect9"/></field>
+		<field id="EffectArray_Operation"><index>^CC8^</index><value>^Operation^</value>		  		<condition id="ForEffect9"/></field>
+		<field id="EffectArray_Value">	  <index>^CC8^</index><value>^Amount9^</value>			  		<condition id="ForEffect9"/></field>
+		<field id="EffectArray_Reference"><index>^CC8^</index><value>Weapon,^Weapon9^,^Change^</value>	<condition id="ForWeaponIcon9"/></field>
+		<field id="EffectArray_Operation"><index>^CC8^</index><value>Set</value>		  				<condition id="ForWeaponIcon9"/></field>
+		<field id="EffectArray_Value">	  <index>^CC8^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon9"/></field>
+		<field id="EffectArray_Reference"><index>^CC8^</index><value>Weapon,^Weapon9^,^Change^</value>	<condition id="ForWeaponLevel9"/></field>
+		<field id="EffectArray_Operation"><index>^CC8^</index><value>^Operation^</value>				<condition id="ForWeaponLevel9"/></field>
+		<field id="EffectArray_Value">	  <index>^CC8^</index><value>^Amount9int^</value>			  	<condition id="ForWeaponLevel9"/></field>
+		<field id="EffectArray_Reference"><index>^CC8^</index><value>Unit,^Unit9^,^Change^</value>		<condition id="ForUnitInt9"/></field>
+		<field id="EffectArray_Operation"><index>^CC8^</index><value>^Operation^</value>		  		<condition id="ForUnitInt9"/></field>
+		<field id="EffectArray_Value">	  <index>^CC8^</index><value>^Amount9int^</value>			  	<condition id="ForUnitInt9"/></field>
+		<field id="EffectArray_Reference"><index>^CC8^</index><value>Actor,^Actor9^,^Change^</value>	<condition id="ForActor9"/></field>
+		<field id="EffectArray_Operation"><index>^CC8^</index><value>Set</value>		  				<condition id="ForActor9"/></field>
+		<field id="EffectArray_Value">	  <index>^CC8^</index><value>^ActorIcon^</value>			  	<condition id="ForActor9"/></field>
+	</entry>
+	<!--For CC9-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgradeLink^</id>
+		<condition id="IsExistingUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^CC9^</index><value>Unit,^Unit10^,^Change^</value>		<condition id="ForUnit10"/></field>
+		<field id="EffectArray_Operation"><index>^CC9^</index><value>^Operation^</value>		  		<condition id="ForUnit10"/></field>
+		<field id="EffectArray_Value">	  <index>^CC9^</index><value>^Amount10^</value>			  		<condition id="ForUnit10"/></field>
+		<field id="EffectArray_Reference"><index>^CC9^</index><value>Weapon,^Weapon10^,^Change^</value>	<condition id="ForWeaponNotIcon10"/></field>
+		<field id="EffectArray_Operation"><index>^CC9^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon10"/></field>
+		<field id="EffectArray_Value">	  <index>^CC9^</index><value>^Amount10^</value>			  		<condition id="ForWeaponNotIcon10"/></field>
+		<field id="EffectArray_Reference"><index>^CC9^</index><value>Effect,^Effect10^,^DamageBonus^</value>	<condition id="ForEffect10"/></field>
+		<field id="EffectArray_Operation"><index>^CC9^</index><value>^Operation^</value>		  		<condition id="ForEffect10"/></field>
+		<field id="EffectArray_Value">	  <index>^CC9^</index><value>^Amount10^</value>			  		<condition id="ForEffect10"/></field>
+		<field id="EffectArray_Reference"><index>^CC9^</index><value>Weapon,^Weapon10^,^Change^</value>	<condition id="ForWeaponIcon10"/></field>
+		<field id="EffectArray_Operation"><index>^CC9^</index><value>Set</value>		  				<condition id="ForWeaponIcon10"/></field>
+		<field id="EffectArray_Value">	  <index>^CC9^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon10"/></field>
+		<field id="EffectArray_Reference"><index>^CC9^</index><value>Weapon,^Weapon10^,^Change^</value>	<condition id="ForWeaponLevel10"/></field>
+		<field id="EffectArray_Operation"><index>^CC9^</index><value>^Operation^</value>				<condition id="ForWeaponLevel10"/></field>
+		<field id="EffectArray_Value">	  <index>^CC9^</index><value>^Amount10int^</value>			  	<condition id="ForWeaponLevel10"/></field>
+		<field id="EffectArray_Reference"><index>^CC9^</index><value>Unit,^Unit10^,^Change^</value>		<condition id="ForUnitInt10"/></field>
+		<field id="EffectArray_Operation"><index>^CC9^</index><value>^Operation^</value>		  		<condition id="ForUnitInt10"/></field>
+		<field id="EffectArray_Value">	  <index>^CC9^</index><value>^Amount10int^</value>			  	<condition id="ForUnitInt10"/></field>
+		<field id="EffectArray_Reference"><index>^CC9^</index><value>Actor,^Actor10^,^Change^</value>	<condition id="ForActor10"/></field>
+		<field id="EffectArray_Operation"><index>^CC9^</index><value>Set</value>		  				<condition id="ForActor10"/></field>
+		<field id="EffectArray_Value">	  <index>^CC9^</index><value>^ActorIcon^</value>			  	<condition id="ForActor10"/></field>
+	</entry>
+
+<!--Create Upgrade-->
+	<!--Dummy count upg-->
+	<input id="NewCount" type="int32">
+		<condition id="IsDisabled"/>
+		<layout page="2"/>
+	</input>
+
+	<macro id="NC0">^NewCount^ + 0</macro>
+    <macro id="NC1">^NewCount^ + 1</macro>
+	<macro id="NC2">^NewCount^ + 2</macro>
+	<macro id="NC3">^NewCount^ + 3</macro>
+	<macro id="NC4">^NewCount^ + 4</macro>
+	<macro id="NC5">^NewCount^ + 5</macro>
+	<macro id="NC6">^NewCount^ + 6</macro>
+	<macro id="NC7">^NewCount^ + 7</macro>
+	<macro id="NC8">^NewCount^ + 8</macro>
+	<macro id="NC9">^NewCount^ + 9</macro>
+
+	<!--Creates the actual upgrade-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<condition id="IsCreateUpgrade"/>
+		<id>^UpgID^</id>
+		<name>UpgName</name>
+		<field id="Icon"><value>^UpgradeIcon^</value><condition input="UpgradeIcon" empty="0"/></field>
+		<field id="Race"><value>^UpgradeRace^</value><condition input="UpgradeRace" empty="0"/></field>
+		<field id="Alert"><value>^UpgradeAlert^</value><condition input="UpgradeAlert" empty="0"/></field>
+		<field id="ScoreAmount"><value>^UpgradeScore^</value></field>
+		<field id="MaxLevel"><value>^MaxLevel^</value></field>
+	</entry>
+
+<!--Create the Research Ability-->
+	<entry catalog="Abil" type="CAbilResearch">
+		<condition id="IsCreateUpgradeAndResearch"/>
+		<id>^ResearchID^Research</id>
+		<name>^ResearchID^Research</name>
+		<field id="Flags"> <condition input="AbilFlag" value="1"/> <index>2</index><value>1</value></field>
+		<field id="InfoArray_Button_DefaultButtonFace">	<index>0</index><value>^ResearchButton^</value></field>
+		<field id="InfoArray_Upgrade">					<index>0</index><value>^UpgID^</value></field>
+		<field id="InfoArray_Time">						<index>0</index><value>^CostTime^</value></field>
+		<field id="InfoArray_Resource">					<index>0;0</index><value>^CostMineral^</value></field>
+		<field id="InfoArray_Resource">					<index>0;1</index><value>^CostVespene^</value></field>
+		<field id="InfoArray_Button_Requirements">		<value>Learn^UpgID^</value></field>
+	</entry>    
+
+<!--Use Existing Research ability-->
+	<!--All the following code is to filter for the next available slot in the array, then add the inputs to that slot for the entry-->
+<!--Compare dummy inputs if it's the first empty-->
+	<condition id="R0" input="ResearchArray0" empty="1"/>
+
+	<condition id="R1" logic="and">
+		<condition input="ResearchArray0" empty="0"/>
+		<condition input="ResearchArray1" empty="1"/>
+	</condition>
+	<condition id="R2" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/>
+		<condition input="ResearchArray2" empty="1"/>
+	</condition>
+	<condition id="R3" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/>
+		<condition input="ResearchArray3" empty="1"/>
+	</condition>
+	<condition id="R4" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="1"/>
+	</condition>
+	<condition id="R5" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/>
+		<condition input="ResearchArray5" empty="1"/>
+	</condition>
+	<condition id="R6" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/>
+		<condition input="ResearchArray6" empty="1"/>
+	</condition>
+	<condition id="R7" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/>
+		<condition input="ResearchArray7" empty="1"/>
+	</condition>
+	<condition id="R8" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="1"/>
+	</condition>
+	<condition id="R9" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/>
+		<condition input="ResearchArray9" empty="1"/>
+	</condition>
+	<condition id="R10" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/>
+		<condition input="ResearchArray10" empty="1"/>
+	</condition>
+	<condition id="R11" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/>
+		<condition input="ResearchArray11" empty="1"/>
+	</condition>
+	<condition id="R12" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="1"/>
+	</condition>
+	<condition id="R13" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/>
+		<condition input="ResearchArray13" empty="1"/>
+	</condition>
+	<condition id="R14" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/><condition input="ResearchArray13" empty="0"/>
+		<condition input="ResearchArray14" empty="1"/>
+	</condition>
+	<condition id="R15" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/><condition input="ResearchArray13" empty="0"/><condition input="ResearchArray14" empty="0"/>
+		<condition input="ResearchArray15" empty="1"/>
+	</condition>
+	<condition id="R16" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/><condition input="ResearchArray13" empty="0"/><condition input="ResearchArray14" empty="0"/><condition input="ResearchArray15" empty="0"/>
+		<condition input="ResearchArray16" empty="1"/>
+	</condition>
+	<condition id="R17" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/><condition input="ResearchArray13" empty="0"/><condition input="ResearchArray14" empty="0"/><condition input="ResearchArray15" empty="0"/>
+		<condition input="ResearchArray16" empty="0"/>
+		<condition input="ResearchArray17" empty="1"/>
+	</condition>
+	<condition id="R18" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/><condition input="ResearchArray13" empty="0"/><condition input="ResearchArray14" empty="0"/><condition input="ResearchArray15" empty="0"/>
+		<condition input="ResearchArray16" empty="0"/><condition input="ResearchArray17" empty="0"/>
+		<condition input="ResearchArray18" empty="1"/>
+	</condition>
+	<condition id="R19" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/><condition input="ResearchArray13" empty="0"/><condition input="ResearchArray14" empty="0"/><condition input="ResearchArray15" empty="0"/>
+		<condition input="ResearchArray16" empty="0"/><condition input="ResearchArray17" empty="0"/><condition input="ResearchArray18" empty="0"/>
+		<condition input="ResearchArray19" empty="1"/>
+	</condition>
+	<condition id="R20" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/><condition input="ResearchArray13" empty="0"/><condition input="ResearchArray14" empty="0"/><condition input="ResearchArray15" empty="0"/>
+		<condition input="ResearchArray16" empty="0"/><condition input="ResearchArray17" empty="0"/><condition input="ResearchArray18" empty="0"/><condition input="ResearchArray19" empty="0"/>
+		<condition input="ResearchArray20" empty="1"/>
+	</condition>
+	<condition id="R21" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/><condition input="ResearchArray13" empty="0"/><condition input="ResearchArray14" empty="0"/><condition input="ResearchArray15" empty="0"/>
+		<condition input="ResearchArray16" empty="0"/><condition input="ResearchArray17" empty="0"/><condition input="ResearchArray18" empty="0"/><condition input="ResearchArray19" empty="0"/>
+		<condition input="ResearchArray20" empty="0"/>
+		<condition input="ResearchArray21" empty="1"/>
+	</condition>
+	<condition id="R22" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/><condition input="ResearchArray13" empty="0"/><condition input="ResearchArray14" empty="0"/><condition input="ResearchArray15" empty="0"/>
+		<condition input="ResearchArray16" empty="0"/><condition input="ResearchArray17" empty="0"/><condition input="ResearchArray18" empty="0"/><condition input="ResearchArray19" empty="0"/>
+		<condition input="ResearchArray20" empty="0"/><condition input="ResearchArray21" empty="0"/>
+		<condition input="ResearchArray22" empty="1"/>
+	</condition>
+	<condition id="R23" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/><condition input="ResearchArray13" empty="0"/><condition input="ResearchArray14" empty="0"/><condition input="ResearchArray15" empty="0"/>
+		<condition input="ResearchArray16" empty="0"/><condition input="ResearchArray17" empty="0"/><condition input="ResearchArray18" empty="0"/><condition input="ResearchArray19" empty="0"/>
+		<condition input="ResearchArray20" empty="0"/><condition input="ResearchArray21" empty="0"/><condition input="ResearchArray22" empty="0"/>
+		<condition input="ResearchArray23" empty="1"/>
+	</condition>
+	<condition id="R24" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/><condition input="ResearchArray13" empty="0"/><condition input="ResearchArray14" empty="0"/><condition input="ResearchArray15" empty="0"/>
+		<condition input="ResearchArray16" empty="0"/><condition input="ResearchArray17" empty="0"/><condition input="ResearchArray18" empty="0"/><condition input="ResearchArray19" empty="0"/>
+		<condition input="ResearchArray20" empty="0"/><condition input="ResearchArray21" empty="0"/><condition input="ResearchArray22" empty="0"/><condition input="ResearchArray23" empty="0"/>
+		<condition input="ResearchArray24" empty="1"/>
+	</condition>
+	<condition id="R25" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/><condition input="ResearchArray13" empty="0"/><condition input="ResearchArray14" empty="0"/><condition input="ResearchArray15" empty="0"/>
+		<condition input="ResearchArray16" empty="0"/><condition input="ResearchArray17" empty="0"/><condition input="ResearchArray18" empty="0"/><condition input="ResearchArray19" empty="0"/>
+		<condition input="ResearchArray20" empty="0"/><condition input="ResearchArray21" empty="0"/><condition input="ResearchArray22" empty="0"/><condition input="ResearchArray23" empty="0"/>
+		<condition input="ResearchArray24" empty="0"/>
+		<condition input="ResearchArray25" empty="1"/>
+	</condition>
+	<condition id="R26" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/><condition input="ResearchArray13" empty="0"/><condition input="ResearchArray14" empty="0"/><condition input="ResearchArray15" empty="0"/>
+		<condition input="ResearchArray16" empty="0"/><condition input="ResearchArray17" empty="0"/><condition input="ResearchArray18" empty="0"/><condition input="ResearchArray19" empty="0"/>
+		<condition input="ResearchArray20" empty="0"/><condition input="ResearchArray21" empty="0"/><condition input="ResearchArray22" empty="0"/><condition input="ResearchArray23" empty="0"/>
+		<condition input="ResearchArray24" empty="0"/><condition input="ResearchArray25" empty="0"/>
+		<condition input="ResearchArray26" empty="1"/>
+	</condition>
+	<condition id="R27" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/><condition input="ResearchArray13" empty="0"/><condition input="ResearchArray14" empty="0"/><condition input="ResearchArray15" empty="0"/>
+		<condition input="ResearchArray16" empty="0"/><condition input="ResearchArray17" empty="0"/><condition input="ResearchArray18" empty="0"/><condition input="ResearchArray19" empty="0"/>
+		<condition input="ResearchArray20" empty="0"/><condition input="ResearchArray21" empty="0"/><condition input="ResearchArray22" empty="0"/><condition input="ResearchArray23" empty="0"/>
+		<condition input="ResearchArray24" empty="0"/><condition input="ResearchArray25" empty="0"/><condition input="ResearchArray26" empty="0"/>
+		<condition input="ResearchArray27" empty="1"/>
+	</condition>
+	<condition id="R28" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/><condition input="ResearchArray13" empty="0"/><condition input="ResearchArray14" empty="0"/><condition input="ResearchArray15" empty="0"/>
+		<condition input="ResearchArray16" empty="0"/><condition input="ResearchArray17" empty="0"/><condition input="ResearchArray18" empty="0"/><condition input="ResearchArray19" empty="0"/>
+		<condition input="ResearchArray20" empty="0"/><condition input="ResearchArray21" empty="0"/><condition input="ResearchArray22" empty="0"/><condition input="ResearchArray23" empty="0"/>
+		<condition input="ResearchArray24" empty="0"/><condition input="ResearchArray25" empty="0"/><condition input="ResearchArray26" empty="0"/><condition input="ResearchArray27" empty="0"/>
+		<condition input="ResearchArray28" empty="1"/>
+	</condition>
+	<condition id="R29" logic="and">
+		<condition input="ResearchArray0" empty="0"/><condition input="ResearchArray1" empty="0"/><condition input="ResearchArray2" empty="0"/><condition input="ResearchArray3" empty="0"/>
+		<condition input="ResearchArray4" empty="0"/><condition input="ResearchArray5" empty="0"/><condition input="ResearchArray6" empty="0"/><condition input="ResearchArray7" empty="0"/>
+		<condition input="ResearchArray8" empty="0"/><condition input="ResearchArray9" empty="0"/><condition input="ResearchArray10" empty="0"/><condition input="ResearchArray11" empty="0"/>
+		<condition input="ResearchArray12" empty="0"/><condition input="ResearchArray13" empty="0"/><condition input="ResearchArray14" empty="0"/><condition input="ResearchArray15" empty="0"/>
+		<condition input="ResearchArray16" empty="0"/><condition input="ResearchArray17" empty="0"/><condition input="ResearchArray18" empty="0"/><condition input="ResearchArray19" empty="0"/>
+		<condition input="ResearchArray20" empty="0"/><condition input="ResearchArray21" empty="0"/><condition input="ResearchArray22" empty="0"/><condition input="ResearchArray23" empty="0"/>
+		<condition input="ResearchArray24" empty="0"/><condition input="ResearchArray25" empty="0"/><condition input="ResearchArray26" empty="0"/><condition input="ResearchArray27" empty="0"/>
+		<condition input="ResearchArray28" empty="0"/>
+		<condition input="ResearchArray29" empty="1"/>
+	</condition>
+
+	<!--Create pseudo variable for the array slot. This saves a value in an temporary entry in the editor and at the end of the wizard gets revert back to default-->
+	<entry catalog="Unit" type="CUnit">
+    	<id>CUnit</id>
+		<allowmodify/>
+       <field id="LifeArmor"><condition id="R0"/><value>0</value></field>
+	   <field id="LifeArmor"><condition id="R1"/><value>1</value></field>
+	   <field id="LifeArmor"><condition id="R2"/><value>2</value></field>
+	   <field id="LifeArmor"><condition id="R3"/><value>3</value></field>
+	   <field id="LifeArmor"><condition id="R4"/><value>4</value></field>
+	   <field id="LifeArmor"><condition id="R5"/><value>5</value></field>
+	   <field id="LifeArmor"><condition id="R6"/><value>6</value></field>
+	   <field id="LifeArmor"><condition id="R7"/><value>7</value></field>
+	   <field id="LifeArmor"><condition id="R8"/><value>8</value></field>
+	   <field id="LifeArmor"><condition id="R9"/><value>9</value></field>
+	   <field id="LifeArmor"><condition id="R10"/><value>10</value></field>
+	   <field id="LifeArmor"><condition id="R11"/><value>11</value></field>
+	   <field id="LifeArmor"><condition id="R12"/><value>12</value></field>
+	   <field id="LifeArmor"><condition id="R13"/><value>13</value></field>
+	   <field id="LifeArmor"><condition id="R14"/><value>14</value></field>
+	   <field id="LifeArmor"><condition id="R15"/><value>15</value></field>
+	   <field id="LifeArmor"><condition id="R16"/><value>16</value></field>
+	   <field id="LifeArmor"><condition id="R17"/><value>17</value></field>
+	   <field id="LifeArmor"><condition id="R18"/><value>18</value></field>
+	   <field id="LifeArmor"><condition id="R19"/><value>19</value></field>
+	   <field id="LifeArmor"><condition id="R20"/><value>20</value></field>
+	   <field id="LifeArmor"><condition id="R21"/><value>21</value></field>
+	   <field id="LifeArmor"><condition id="R22"/><value>22</value></field>
+	   <field id="LifeArmor"><condition id="R23"/><value>23</value></field>
+	   <field id="LifeArmor"><condition id="R24"/><value>24</value></field>
+	   <field id="LifeArmor"><condition id="R25"/><value>25</value></field>
+	   <field id="LifeArmor"><condition id="R26"/><value>26</value></field>
+	   <field id="LifeArmor"><condition id="R27"/><value>27</value></field>
+	   <field id="LifeArmor"><condition id="R28"/><value>28</value></field>
+	   <field id="LifeArmor"><condition id="R29"/><value>29</value></field>
+    </entry>
+	<macro id="v_ResearchArraySlot">ref=Unit,CUnit,LifeArmor</macro>
+	<!--Creates the Ability and add the upg to it-->
+	<entry catalog="Abil" type="CAbil">
+		<id>^ResearchLink^</id>
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="ResearchAbility" value="0"/>
+		</condition>
+		<allowmodify/>
+		<field id="InfoArray_Upgrade">						<index>^v_ResearchArraySlot^</index><value>^UpgID^</value></field>
+			<field id="InfoArray_Button_DefaultButtonFace">	<index>^v_ResearchArraySlot^</index><value>^ResearchButton^</value></field>
+			<field id="InfoArray_Time">						<index>^v_ResearchArraySlot^</index><value>^CostTime^</value></field>
+			<field id="InfoArray_Resource">					<index>^v_ResearchArraySlot^;0</index><value>^CostMineral^</value></field>
+			<field id="InfoArray_Resource">					<index>^v_ResearchArraySlot^;1</index><value>^CostVespene^</value></field>
+			<field id="InfoArray_Button_Requirements">		<index>^v_ResearchArraySlot^</index><value>Learn^UpgID^</value></field>
+	</entry>
+
+	<!--Config logic to prevent useless entries-->
+	<condition id="YesTime" logic="and">
+		<condition input="IncCostTime" operator="greater" value="0"/>
+	</condition>
+	<condition id="NoTimeYesMineral" logic="and">
+		<condition input="IncCostTime" operator="equal" value="0"/>
+		<condition input="IncCostMineral" operator="greater" value="0"/>
+	</condition>
+	<condition id="NoTimeNoMineralYesVespene" logic="and">
+		<condition input="IncCostTime" operator="equal" value="0"/>
+		<condition input="IncCostMineral" operator="equal" value="0"/>
+		<condition input="IncCostVespene" operator="greater" value="0"/>
+	</condition>
+	<condition id="YesTimeYesMineral" logic="and">
+		<condition input="IncCostTime" operator="greater" value="0"/>
+		<condition input="IncCostMineral" operator="greater" value="0"/>
+	</condition>
+	<condition id="YesTimeNoMineralYesVespene" logic="and">
+		<condition input="IncCostTime" operator="greater" value="0"/>
+		<condition input="IncCostMineral" operator="equal" alue="0"/>
+		<condition input="IncCostVespene" operator="greater" value="0"/>
+	</condition>
+	<condition id="YesTimeYesMineralYesVespene" logic="and">
+		<condition input="IncCostTime" operator="greater" value="0"/>
+		<condition input="IncCostMineral" operator="greater" value="0"/>
+		<condition input="IncCostVespene" operator="greater" value="0"/>
+	</condition>
+	<condition id="NoTimeYesMineralYesVespene" logic="and">
+		<condition input="IncCostTime" operator="equal" value="0"/>
+		<condition input="IncCostMineral" operator="greater" value="0"/>
+		<condition input="IncCostVespene" operator="greater" value="0"/>
+	</condition>
+
+	<macro id="v_ResearchArraySlotPlus1">^v_ResearchArraySlot^ + 1</macro>
+	<!--Creating Upgrade, existing ability: Modify Cost Increment Upgrade; CC for ChangeCount-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgID^</id>
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="ResearchAbility" value="0"/>
+		</condition>
+		<allowmodify/>	
+		<field id="EffectArray_Reference"><index>^NC0^</index><value>Abil,^ResearchLink^,InfoArray[Research^v_ResearchArraySlotPlus1^].Time</value>				<condition id="YesTime"/></field>
+		<field id="EffectArray_Operation"><index>^NC0^</index><value>Add</value>																				<condition id="YesTime"/></field>
+		<field id="EffectArray_Value">	  <index>^NC0^</index><value>^IncCostTime^</value>																		<condition id="YesTime"/></field>
+		<field id="EffectArray_Reference"><index>^NC0^</index><value>Abil,^ResearchLink^,InfoArray[Research^v_ResearchArraySlotPlus1^].Resource[Minerals]</value><condition id="NoTimeYesMineral"/></field>
+		<field id="EffectArray_Operation"><index>^NC0^</index><value>Add</value>																				<condition id="NoTimeYesMineral"/></field>
+		<field id="EffectArray_Value">	  <index>^NC0^</index><value>^IncCostMineral^</value>																	<condition id="NoTimeYesMineral"/></field>
+		<field id="EffectArray_Reference"><index>^NC0^</index><value>Abil,^ResearchLink^,InfoArray[Research^v_ResearchArraySlotPlus1^].Resource[Vespene]</value><condition id="NoTimeNoMineralYesVespene"/></field>
+		<field id="EffectArray_Operation"><index>^NC0^</index><value>Add</value>																				<condition id="NoTimeNoMineralYesVespene"/></field>
+		<field id="EffectArray_Value">	  <index>^NC0^</index><value>^IncCostVespene^</value>																	<condition id="NoTimeNoMineralYesVespene"/></field>
+	</entry>
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgID^</id>
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="ResearchAbility" value="0"/>
+		</condition>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^NC1^</index><value>Abil,^ResearchLink^,InfoArray[Research^v_ResearchArraySlotPlus1^].Resource[Minerals]</value><condition id="YesTimeYesMineral"/></field>
+		<field id="EffectArray_Operation"><index>^NC1^</index><value>Add</value>																				<condition id="YesTimeYesMineral"/></field>
+		<field id="EffectArray_Value">	  <index>^NC1^</index><value>^IncCostMineral^</value>																	<condition id="YesTimeYesMineral"/></field>
+		<field id="EffectArray_Reference"><index>^NC1^</index><value>Abil,^ResearchLink^,InfoArray[Research^v_ResearchArraySlotPlus1^].Resource[Vespene]</value><condition id="YesTimeNoMineralYesVespene"/></field>
+		<field id="EffectArray_Operation"><index>^NC1^</index><value>Add</value>																				<condition id="YesTimeNoMineralYesVespene"/></field>
+		<field id="EffectArray_Value">	  <index>^NC1^</index><value>^IncCostVespene^</value>																	<condition id="YesTimeNoMineralYesVespene"/></field>
+		<field id="EffectArray_Reference"><index>^NC1^</index><value>Abil,^ResearchLink^,InfoArray[Research^v_ResearchArraySlotPlus1^].Resource[Vespene]</value><condition id="NoTimeYesMineralYesVespene"/></field>
+		<field id="EffectArray_Operation"><index>^NC1^</index><value>Add</value>																				<condition id="NoTimeYesMineralYesVespene"/></field>
+		<field id="EffectArray_Value">	  <index>^NC1^</index><value>^IncCostVespene^</value>																	<condition id="NoTimeYesMineralYesVespene"/></field>
+	</entry>
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgID^</id>
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="ResearchAbility" value="0"/>
+		</condition>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^NC2^</index><value>Abil,^ResearchLink^,InfoArray[Research^v_ResearchArraySlotPlus1^].Resource[Vespene]</value><condition id="YesTimeYesMineralYesVespene"/></field>
+		<field id="EffectArray_Operation"><index>^NC2^</index><value>Add</value>																				<condition id="YesTimeYesMineralYesVespene"/></field>
+		<field id="EffectArray_Value">	  <index>^NC2^</index><value>^IncCostVespene^</value>																	<condition id="YesTimeYesMineralYesVespene"/></field>
+	</entry>
+
+	<!--Creating Upgrade, creating ability: Modify Cost Increment Upgrade; CC for ChangeCount-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgID^</id>
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="ResearchAbility" value="1"/>
+		</condition>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>0</index><value>Abil,^ResearchID^Research,InfoArray[Research1].Time</value>				<condition id="YesTime"/></field>
+		<field id="EffectArray_Operation"><index>0</index><value>Add</value>																<condition id="YesTime"/></field>
+		<field id="EffectArray_Value">	  <index>0</index><value>^IncCostTime^</value>														<condition id="YesTime"/></field>
+		<field id="EffectArray_Reference"><index>0</index><value>Abil,^ResearchID^Research,InfoArray[Research1].Resource[Minerals]</value>	<condition id="NoTimeYesMineral"/></field>
+		<field id="EffectArray_Operation"><index>0</index><value>Add</value>																<condition id="NoTimeYesMineral"/></field>
+		<field id="EffectArray_Value">	  <index>0</index><value>^IncCostMineral^</value>													<condition id="NoTimeYesMineral"/></field>
+		<field id="EffectArray_Reference"><index>0</index><value>Abil,^ResearchID^Research,InfoArray[Research1].Resource[Vespene]</value>	<condition id="NoTimeNoMineralYesVespene"/></field>
+		<field id="EffectArray_Operation"><index>0</index><value>Add</value>																<condition id="NoTimeNoMineralYesVespene"/></field>
+		<field id="EffectArray_Value">	  <index>0</index><value>^IncCostVespene^</value>													<condition id="NoTimeNoMineralYesVespene"/></field>
+	</entry>
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgID^</id>
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="ResearchAbility" value="1"/>
+		</condition>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>1</index><value>Abil,^ResearchID^Research,InfoArray[Research1].Resource[Minerals]</value>	<condition id="YesTimeYesMineral"/></field>
+		<field id="EffectArray_Operation"><index>1</index><value>Add</value>																<condition id="YesTimeYesMineral"/></field>
+		<field id="EffectArray_Value">	  <index>1</index><value>^IncCostMineral^</value>													<condition id="YesTimeYesMineral"/></field>
+		<field id="EffectArray_Reference"><index>1</index><value>Abil,^ResearchID^Research,InfoArray[Research1].Resource[Vespene]</value>	<condition id="YesTimeNoMineralYesVespene"/></field>
+		<field id="EffectArray_Operation"><index>1</index><value>Add</value>																<condition id="YesTimeNoMineralYesVespene"/></field>
+		<field id="EffectArray_Value">	  <index>1</index><value>^IncCostVespene^</value>													<condition id="YesTimeNoMineralYesVespene"/></field>
+		<field id="EffectArray_Reference"><index>1</index><value>Abil,^ResearchID^Research,InfoArray[Research1].Resource[Vespene]</value>	<condition id="NoTimeYesMineralYesVespene"/></field>
+		<field id="EffectArray_Operation"><index>1</index><value>Add</value>																<condition id="NoTimeYesMineralYesVespene"/></field>
+		<field id="EffectArray_Value">	  <index>1</index><value>^IncCostVespene^</value>													<condition id="NoTimeYesMineralYesVespene"/></field>
+	</entry>
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgID^</id>
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="ResearchAbility" value="1"/>
+		</condition>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>2</index><value>Abil,^ResearchID^Research,InfoArray[Research1].Resource[Vespene]</value><condition id="YesTimeYesMineralYesVespene"/></field>
+		<field id="EffectArray_Operation"><index>2</index><value>Add</value>															<condition id="YesTimeYesMineralYesVespene"/></field>
+		<field id="EffectArray_Value">	  <index>2</index><value>^IncCostVespene^</value>												<condition id="YesTimeYesMineralYesVespene"/></field>
+	</entry>
+
+<!--Create the requirement to hide the button when MaxLevel is reached-->   
+	<macro id="MaxLevelMinusOne">^MaxLevel^-1</macro>
+	<!--Node index 0 for Use, 1 for Show-->
+	<entry catalog="Requirement" type="CRequirement">
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="CreateRequirement" value="1"/>
+		</condition>	
+		<id>Learn^UpgID^</id>
+		<field id="NodeArray_Link"> <!--It Adds the Use Requirement if it's picked in Wizard-->
+			<condition input="UpgradeRequirement" empty="0"/>
+			<index>0</index>
+			<value>ref=Requirement,^UpgradeRequirement^,NodeArray[0].Link</value>
+		</field>
+		<field id="NodeArray_Link">
+			<index>1</index>
+			<value>LTCountUpgrade^UpgID^QueuedOrBetter^MaxLevelMinusOne^</value>
+		</field>
+		<field id="Name">
+			<value>Learn ^UpgID^</value>
+		</field>
+	</entry>
+	<!--Create the necessairy Nodes for the requirement-->
+	<entry catalog="RequirementNode" type="CRequirementCountUpgrade">
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="CreateRequirement" value="1"/>
+		</condition>	
+		<id>CountUpgrade^UpgID^QueuedOrBetter</id>
+		<name>CountUpgrade^UpgID^QueuedOrBetter</name>
+		<field id="Count_State">
+			<value>QueuedOrBetter</value>
+		</field>
+		<field id="Count_Link">
+			<value>^UpgID^</value>
+		</field>
+	</entry>
+	<entry catalog="RequirementNode" type="CRequirementLTE">
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="CreateRequirement" value="1"/>
+		</condition>	
+		<id>LTCountUpgrade^UpgID^QueuedOrBetter^MaxLevelMinusOne^</id>
+		<name>LTCountUpgrade^UpgID^QueuedOrBetter^MaxLevelMinusOne^</name>
+		<field id="OperandArray">
+			<index>0</index>
+			<value>CountUpgrade^UpgID^QueuedOrBetter</value>
+		</field>
+		<field id="OperandArray">
+			<index>1</index>
+			<value>^MaxLevelMinusOne^</value>
+		</field>
+	</entry>
+
+	<!--Add the Queue ability to the unit to allow cancel to work if unit don't have queue-->
+	<entry catalog="Unit" type="CUnit">
+		<condition logic="and">
+			<condition id="IsCreateUpgrade"/>
+			<condition input="AddQueueAbil" value="0"/>
+		</condition>
+        <id>^AddToUnit^</id>
+        <allowmodify/>
+		<field id="AbilArray">
+			<condition id="IsCreateUpgrade"/>
+			<index>ref=Unit,^AddToUnit^,AbilArray#</index>
+			<value>que5</value>
+		</field>
+	</entry>
+
+    <!--Modify Unit-->
+    <!--DummyInput to count the number of button in Unit command card-->
+    <input id="DummyButtonCount" type="int8">
+        <condition id="IsDisabled"/>
+        <loadvalue>ref=Unit,^AddToUnit^,CardLayouts[0].LayoutButtons#</loadvalue>
+        <reloadfrom>AddToUnit</reloadfrom>
+        <layout page="2"/>
+    </input>
+    <macro id="DBCB2">^DummyButtonCount^+1</macro>
+
+
+	<!--If ResearchAbility is creating a new ability-->
+    <entry catalog="Unit" type="CUnit">
+		<condition logic="and">
+			<condition input="AddToUnit" empty="0"/>
+			<condition input="ResearchAbility" value="1"/>
+			<condition id="IsCreateUpgrade"/>
+		</condition>
+        <id>^AddToUnit^</id>
+        <allowmodify/>
+
+		<!--Add ability to abilities of the unit-->
+		<field id="AbilArray">
+			<index>ref=Unit,^AddToUnit^,AbilArray#</index>
+			<value>^ResearchID^Research</value>
+		</field>
+
+        <!--Add the Execute Button to the Command Card-->
+        <field id="CardLayouts_LayoutButtons_Face">
+            <index>^DummyButtonCount^</index>
+            <value>^ResearchButton^</value>
+        </field>
+            <!--Modify the Execute Button-->
+            <field id="CardLayouts_LayoutButtons_Type">
+                <index>^DummyButtonCount^</index>
+                <value>AbilCmd</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_AbilCmd">
+                <index>^DummyButtonCount^</index>
+                <value>^ResearchID^Research,Research1</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_Row">
+                <index>^DummyButtonCount^</index>
+                <value>^CCRow^</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_Column">
+                <index>^DummyButtonCount^</index>
+                <value>^CCColumn^</value>
+            </field>
+
+        <!--Add the Cancel Button to the Command Card-->
+        <field id="CardLayouts_LayoutButtons_Face">
+			<condition id="IsCreateUpgradeAndAddQueue"/>			
+            <index>^DBCB2^</index>
+            <value>Cancel</value>
+        </field>
+            <!--Modify the Cancel Button-->
+            <field id="CardLayouts_LayoutButtons_Type">
+				<condition id="IsCreateUpgradeAndAddQueue"/>
+                <index>^DBCB2^</index>
+                <value>AbilCmd</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_AbilCmd">
+				<condition id="IsCreateUpgradeAndAddQueue"/>
+                <index>^DBCB2^</index>
+                <value>que5,CancelLast</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_Row">
+				<condition id="IsCreateUpgradeAndAddQueue"/>
+                <index>^DBCB2^</index>
+                <value>2</value>
+            </field>
+            <field id="CardLayouts_LayoutButtons_Column">
+				<condition id="IsCreateUpgradeAndAddQueue"/>
+                <index>^DBCB2^</index>
+                <value>4</value>
+            </field>
+    </entry>
+
+
+    <!--DummyInput to count the number of button in Unit command card-->
+    <input id="DummyButtonCountEX" type="int8">
+        <condition id="IsDisabled"/>
+        <loadvalue>ref=Unit,^AddToUnitExistingResearch^,CardLayouts[0].LayoutButtons#</loadvalue>
+        <reloadfrom>AddToUnitExistingResearch</reloadfrom>
+        <layout page="2"/>
+    </input>
+    <macro id="DBCB2EX">^DummyButtonCountEX^+1</macro>
+
+	<!--If ResearchAbility is Existing Research-->
+
+    <entry catalog="Unit" type="CUnit">
+		<condition logic="and">
+			<condition input="AddToUnitExistingResearch" empty="0"/>
+			<condition input="ResearchAbility" value="0"/>
+			<condition id="IsCreateUpgrade"/>
+		</condition>
+        <id>^AddToUnitExistingResearch^</id>
+        <allowmodify/>
+
+		<macro id="ResearchPlus1">^v_ResearchArraySlot^+1</macro>
+        <!--Add the Execute Button to the Command Card-->
+        <field id="CardLayouts_LayoutButtons_Face"><index>^DummyButtonCountEX^</index><value>^ResearchButton^</value></field>
+            <!--Modify the Execute Button-->
+            <field id="CardLayouts_LayoutButtons_Type">		<index>^DummyButtonCountEX^</index><value>AbilCmd</value></field>
+            <field id="CardLayouts_LayoutButtons_Row">		<index>^DummyButtonCountEX^</index><value>^CCRow^</value></field>
+            <field id="CardLayouts_LayoutButtons_Column">	<index>^DummyButtonCountEX^</index><value>^CCColumn^</value></field>
+			<!--Set the AbilityCommand-->
+			<field id="CardLayouts_LayoutButtons_AbilCmd"><index>^DummyButtonCountEX^</index><value>^ResearchLink^,Research^ResearchPlus1^</value></field>
+
+
+        <!--Add the Cancel Button to the Command Card-->
+        <field id="CardLayouts_LayoutButtons_Face"><condition id="IsCreateUpgradeAndAddQueue"/><index>^DBCB2EX^</index><value>Cancel</value></field>
+            <!--Modify the Cancel Button-->
+            <field id="CardLayouts_LayoutButtons_Type">		<condition id="IsCreateUpgradeAndAddQueue"/><index>^DBCB2EX^</index><value>AbilCmd</value></field>
+            <field id="CardLayouts_LayoutButtons_AbilCmd">	<condition id="IsCreateUpgradeAndAddQueue"/><index>^DBCB2EX^</index><value>que5,CancelLast</value></field>
+            <field id="CardLayouts_LayoutButtons_Row">		<condition id="IsCreateUpgradeAndAddQueue"/><index>^DBCB2EX^</index><value>2</value></field>
+            <field id="CardLayouts_LayoutButtons_Column">	<condition id="IsCreateUpgradeAndAddQueue"/><index>^DBCB2EX^</index><value>4</value></field>
+    </entry>
+
+
+<!--Create Upgrade inputs-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgID^</id>
+		<condition id="IsCreateUpgrade"/>
+		<allowmodify/>
+	<!--For NC0-->
+		<field id="EffectArray_Reference"><index>^NC0^</index><value>Unit,^Unit1^,^Change^</value>		<condition id="ForUnit1"/></field>
+		<field id="EffectArray_Operation"><index>^NC0^</index><value>^Operation^</value>		  		<condition id="ForUnit1"/></field>
+		<field id="EffectArray_Value">	  <index>^NC0^</index><value>^Amount1^</value>			  		<condition id="ForUnit1"/></field>
+		<field id="EffectArray_Reference"><index>^NC0^</index><value>Weapon,^Weapon1^,^Change^</value>	<condition id="ForWeaponNotIcon1"/></field>
+		<field id="EffectArray_Operation"><index>^NC0^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon1"/></field>
+		<field id="EffectArray_Value">	  <index>^NC0^</index><value>^Amount1^</value>			  		<condition id="ForWeaponNotIcon1"/></field>
+		<field id="EffectArray_Reference"><index>^NC0^</index><value>Effect,^Effect1^,^DamageBonus^</value>	<condition id="ForEffect1"/></field>
+		<field id="EffectArray_Operation"><index>^NC0^</index><value>^Operation^</value>		  		<condition id="ForEffect1"/></field>
+		<field id="EffectArray_Value">	  <index>^NC0^</index><value>^Amount1^</value>			  		<condition id="ForEffect1"/></field>
+		<field id="EffectArray_Reference"><index>^NC0^</index><value>Weapon,^Weapon1^,^Change^</value>	<condition id="ForWeaponIcon1"/></field>
+		<field id="EffectArray_Operation"><index>^NC0^</index><value>Set</value>		  				<condition id="ForWeaponIcon1"/></field>
+		<field id="EffectArray_Value">	  <index>^NC0^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon1"/></field>
+		<field id="EffectArray_Reference"><index>^NC0^</index><value>Weapon,^Weapon1^,^Change^</value>	<condition id="ForWeaponLevel1"/></field>
+		<field id="EffectArray_Operation"><index>^NC0^</index><value>^Operation^</value>				<condition id="ForWeaponLevel1"/></field>
+		<field id="EffectArray_Value">	  <index>^NC0^</index><value>^Amount1int^</value>			  	<condition id="ForWeaponLevel1"/></field>
+		<field id="EffectArray_Reference"><index>^NC0^</index><value>Unit,^Unit1^,^Change^</value>		<condition id="ForUnitInt1"/></field>
+		<field id="EffectArray_Operation"><index>^NC0^</index><value>^Operation^</value>		  		<condition id="ForUnitInt1"/></field>
+		<field id="EffectArray_Value">	  <index>^NC0^</index><value>^Amount1int^</value>			  	<condition id="ForUnitInt1"/></field>
+		<field id="EffectArray_Reference"><index>^NC0^</index><value>Actor,^Actor1^,^Change^</value>	<condition id="ForActor1"/></field>
+		<field id="EffectArray_Operation"><index>^NC0^</index><value>Set</value>		  				<condition id="ForActor1"/></field>
+		<field id="EffectArray_Value">	  <index>^NC0^</index><value>^ActorIcon^</value>			  	<condition id="ForActor1"/></field>
+		
+	</entry>
+	<!--For NC1-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgID^</id>
+		<condition id="IsCreateUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^NC1^</index><value>Unit,^Unit2^,^Change^</value>		<condition id="ForUnit2"/></field>
+		<field id="EffectArray_Operation"><index>^NC1^</index><value>^Operation^</value>		  		<condition id="ForUnit2"/></field>
+		<field id="EffectArray_Value">	  <index>^NC1^</index><value>^Amount2^</value>			  		<condition id="ForUnit2"/></field>
+		<field id="EffectArray_Reference"><index>^NC1^</index><value>Weapon,^Weapon2^,^Change^</value>	<condition id="ForWeaponNotIcon2"/></field>
+		<field id="EffectArray_Operation"><index>^NC1^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon2"/></field>
+		<field id="EffectArray_Value">	  <index>^NC1^</index><value>^Amount2^</value>			  		<condition id="ForWeaponNotIcon2"/></field>
+		<field id="EffectArray_Reference"><index>^NC1^</index><value>Effect,^Effect2^,^DamageBonus^</value>	<condition id="ForEffect2"/></field>
+		<field id="EffectArray_Operation"><index>^NC1^</index><value>^Operation^</value>		  		<condition id="ForEffect2"/></field>
+		<field id="EffectArray_Value">	  <index>^NC1^</index><value>^Amount2^</value>			  		<condition id="ForEffect2"/></field>
+		<field id="EffectArray_Reference"><index>^NC1^</index><value>Weapon,^Weapon2^,^Change^</value>	<condition id="ForWeaponIcon2"/></field>
+		<field id="EffectArray_Operation"><index>^NC1^</index><value>Set</value>		  				<condition id="ForWeaponIcon2"/></field>
+		<field id="EffectArray_Value">	  <index>^NC1^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon2"/></field>
+		<field id="EffectArray_Reference"><index>^NC1^</index><value>Weapon,^Weapon2^,^Change^</value>	<condition id="ForWeaponLevel2"/></field>
+		<field id="EffectArray_Operation"><index>^NC1^</index><value>^Operation^</value>				<condition id="ForWeaponLevel2"/></field>
+		<field id="EffectArray_Value">	  <index>^NC1^</index><value>^Amount2int^</value>			  	<condition id="ForWeaponLevel2"/></field>
+		<field id="EffectArray_Reference"><index>^NC1^</index><value>Unit,^Unit2^,^Change^</value>		<condition id="ForUnitInt2"/></field>
+		<field id="EffectArray_Operation"><index>^NC1^</index><value>^Operation^</value>		  		<condition id="ForUnitInt2"/></field>
+		<field id="EffectArray_Value">	  <index>^NC1^</index><value>^Amount2int^</value>			  	<condition id="ForUnitInt2"/></field>
+		<field id="EffectArray_Reference"><index>^NC1^</index><value>Actor,^Actor2^,^Change^</value>	<condition id="ForActor2"/></field>
+		<field id="EffectArray_Operation"><index>^NC1^</index><value>Set</value>		  				<condition id="ForActor2"/></field>
+		<field id="EffectArray_Value">	  <index>^NC1^</index><value>^ActorIcon^</value>			  	<condition id="ForActor2"/></field>
+	</entry>
+	<!--For NC2-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgID^</id>
+		<condition id="IsCreateUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^NC2^</index><value>Unit,^Unit3^,^Change^</value>		<condition id="ForUnit3"/></field>
+		<field id="EffectArray_Operation"><index>^NC2^</index><value>^Operation^</value>		  		<condition id="ForUnit3"/></field>
+		<field id="EffectArray_Value">	  <index>^NC2^</index><value>^Amount3^</value>			  		<condition id="ForUnit3"/></field>
+		<field id="EffectArray_Reference"><index>^NC2^</index><value>Weapon,^Weapon3^,^Change^</value>	<condition id="ForWeaponNotIcon3"/></field>
+		<field id="EffectArray_Operation"><index>^NC2^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon3"/></field>
+		<field id="EffectArray_Value">	  <index>^NC2^</index><value>^Amount3^</value>			  		<condition id="ForWeaponNotIcon3"/></field>
+		<field id="EffectArray_Reference"><index>^NC2^</index><value>Effect,^Effect3^,^DamageBonus^</value>	<condition id="ForEffect3"/></field>
+		<field id="EffectArray_Operation"><index>^NC2^</index><value>^Operation^</value>		  		<condition id="ForEffect3"/></field>
+		<field id="EffectArray_Value">	  <index>^NC2^</index><value>^Amount3^</value>			  		<condition id="ForEffect3"/></field>
+		<field id="EffectArray_Reference"><index>^NC2^</index><value>Weapon,^Weapon3^,^Change^</value>	<condition id="ForWeaponIcon3"/></field>
+		<field id="EffectArray_Operation"><index>^NC2^</index><value>Set</value>		  				<condition id="ForWeaponIcon3"/></field>
+		<field id="EffectArray_Value">	  <index>^NC2^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon3"/></field>
+		<field id="EffectArray_Reference"><index>^NC2^</index><value>Weapon,^Weapon3^,^Change^</value>	<condition id="ForWeaponLevel3"/></field>
+		<field id="EffectArray_Operation"><index>^NC2^</index><value>^Operation^</value>				<condition id="ForWeaponLevel3"/></field>
+		<field id="EffectArray_Value">	  <index>^NC2^</index><value>^Amount3int^</value>			  	<condition id="ForWeaponLevel3"/></field>
+		<field id="EffectArray_Reference"><index>^NC2^</index><value>Unit,^Unit3^,^Change^</value>		<condition id="ForUnitInt3"/></field>
+		<field id="EffectArray_Operation"><index>^NC2^</index><value>^Operation^</value>		  		<condition id="ForUnitInt3"/></field>
+		<field id="EffectArray_Value">	  <index>^NC2^</index><value>^Amount3int^</value>			  	<condition id="ForUnitInt3"/></field>
+		<field id="EffectArray_Reference"><index>^NC2^</index><value>Actor,^Actor3^,^Change^</value>	<condition id="ForActor3"/></field>
+		<field id="EffectArray_Operation"><index>^NC2^</index><value>Set</value>		  				<condition id="ForActor3"/></field>
+		<field id="EffectArray_Value">	  <index>^NC2^</index><value>^ActorIcon^</value>			  	<condition id="ForActor3"/></field>
+	</entry>
+	<!--For NC3-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgID^</id>
+		<condition id="IsCreateUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^NC3^</index><value>Unit,^Unit4^,^Change^</value>		<condition id="ForUnit4"/></field>
+		<field id="EffectArray_Operation"><index>^NC3^</index><value>^Operation^</value>		  		<condition id="ForUnit4"/></field>
+		<field id="EffectArray_Value">	  <index>^NC3^</index><value>^Amount4^</value>			  		<condition id="ForUnit4"/></field>
+		<field id="EffectArray_Reference"><index>^NC3^</index><value>Weapon,^Weapon4^,^Change^</value>	<condition id="ForWeaponNotIcon4"/></field>
+		<field id="EffectArray_Operation"><index>^NC3^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon4"/></field>
+		<field id="EffectArray_Value">	  <index>^NC3^</index><value>^Amount4^</value>			  		<condition id="ForWeaponNotIcon4"/></field>
+		<field id="EffectArray_Reference"><index>^NC3^</index><value>Effect,^Effect4^,^DamageBonus^</value>	<condition id="ForEffect4"/></field>
+		<field id="EffectArray_Operation"><index>^NC3^</index><value>^Operation^</value>		  		<condition id="ForEffect4"/></field>
+		<field id="EffectArray_Value">	  <index>^NC3^</index><value>^Amount4^</value>			  		<condition id="ForEffect4"/></field>
+		<field id="EffectArray_Reference"><index>^NC3^</index><value>Weapon,^Weapon4^,^Change^</value>	<condition id="ForWeaponIcon4"/></field>
+		<field id="EffectArray_Operation"><index>^NC3^</index><value>Set</value>		  				<condition id="ForWeaponIcon4"/></field>
+		<field id="EffectArray_Value">	  <index>^NC3^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon4"/></field>
+		<field id="EffectArray_Reference"><index>^NC3^</index><value>Weapon,^Weapon4^,^Change^</value>	<condition id="ForWeaponLevel4"/></field>
+		<field id="EffectArray_Operation"><index>^NC3^</index><value>^Operation^</value>				<condition id="ForWeaponLevel4"/></field>
+		<field id="EffectArray_Value">	  <index>^NC3^</index><value>^Amount4int^</value>			  	<condition id="ForWeaponLevel4"/></field>
+		<field id="EffectArray_Reference"><index>^NC3^</index><value>Unit,^Unit4^,^Change^</value>		<condition id="ForUnitInt4"/></field>
+		<field id="EffectArray_Operation"><index>^NC3^</index><value>^Operation^</value>		  		<condition id="ForUnitInt4"/></field>
+		<field id="EffectArray_Value">	  <index>^NC3^</index><value>^Amount4int^</value>			  	<condition id="ForUnitInt4"/></field>
+		<field id="EffectArray_Reference"><index>^NC3^</index><value>Actor,^Actor4^,^Change^</value>	<condition id="ForActor4"/></field>
+		<field id="EffectArray_Operation"><index>^NC3^</index><value>Set</value>		  				<condition id="ForActor4"/></field>
+		<field id="EffectArray_Value">	  <index>^NC3^</index><value>^ActorIcon^</value>			  	<condition id="ForActor4"/></field>
+	</entry>
+	<!--For NC4-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgID^</id>
+		<condition id="IsCreateUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^NC4^</index><value>Unit,^Unit5^,^Change^</value>		<condition id="ForUnit5"/></field>
+		<field id="EffectArray_Operation"><index>^NC4^</index><value>^Operation^</value>		  		<condition id="ForUnit5"/></field>
+		<field id="EffectArray_Value">	  <index>^NC4^</index><value>^Amount5^</value>			  		<condition id="ForUnit5"/></field>
+		<field id="EffectArray_Reference"><index>^NC4^</index><value>Weapon,^Weapon5^,^Change^</value>	<condition id="ForWeaponNotIcon5"/></field>
+		<field id="EffectArray_Operation"><index>^NC4^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon5"/></field>
+		<field id="EffectArray_Value">	  <index>^NC4^</index><value>^Amount5^</value>			  		<condition id="ForWeaponNotIcon5"/></field>
+		<field id="EffectArray_Reference"><index>^NC4^</index><value>Effect,^Effect5^,^DamageBonus^</value>	<condition id="ForEffect5"/></field>
+		<field id="EffectArray_Operation"><index>^NC4^</index><value>^Operation^</value>		  		<condition id="ForEffect5"/></field>
+		<field id="EffectArray_Value">	  <index>^NC4^</index><value>^Amount5^</value>			  		<condition id="ForEffect5"/></field>
+		<field id="EffectArray_Reference"><index>^NC4^</index><value>Weapon,^Weapon5^,^Change^</value>	<condition id="ForWeaponIcon5"/></field>
+		<field id="EffectArray_Operation"><index>^NC4^</index><value>Set</value>		  				<condition id="ForWeaponIcon5"/></field>
+		<field id="EffectArray_Value">	  <index>^NC4^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon5"/></field>
+		<field id="EffectArray_Reference"><index>^NC4^</index><value>Weapon,^Weapon5^,^Change^</value>	<condition id="ForWeaponLevel5"/></field>
+		<field id="EffectArray_Operation"><index>^NC4^</index><value>^Operation^</value>				<condition id="ForWeaponLevel5"/></field>
+		<field id="EffectArray_Value">	  <index>^NC4^</index><value>^Amount5int^</value>			  	<condition id="ForWeaponLevel5"/></field>
+		<field id="EffectArray_Reference"><index>^NC4^</index><value>Unit,^Unit5^,^Change^</value>		<condition id="ForUnitInt5"/></field>
+		<field id="EffectArray_Operation"><index>^NC4^</index><value>^Operation^</value>		  		<condition id="ForUnitInt5"/></field>
+		<field id="EffectArray_Value">	  <index>^NC4^</index><value>^Amount5int^</value>			  	<condition id="ForUnitInt5"/></field>
+		<field id="EffectArray_Reference"><index>^NC4^</index><value>Actor,^Actor5^,^Change^</value>	<condition id="ForActor5"/></field>
+		<field id="EffectArray_Operation"><index>^NC4^</index><value>Set</value>		  				<condition id="ForActor5"/></field>
+		<field id="EffectArray_Value">	  <index>^NC4^</index><value>^ActorIcon^</value>			  	<condition id="ForActor5"/></field>
+	</entry>
+	<!--For NC5-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgID^</id>
+		<condition id="IsCreateUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^NC5^</index><value>Unit,^Unit6^,^Change^</value>		<condition id="ForUnit6"/></field>
+		<field id="EffectArray_Operation"><index>^NC5^</index><value>^Operation^</value>		  		<condition id="ForUnit6"/></field>
+		<field id="EffectArray_Value">	  <index>^NC5^</index><value>^Amount6^</value>			  		<condition id="ForUnit6"/></field>
+		<field id="EffectArray_Reference"><index>^NC5^</index><value>Weapon,^Weapon6^,^Change^</value>	<condition id="ForWeaponNotIcon6"/></field>
+		<field id="EffectArray_Operation"><index>^NC5^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon6"/></field>
+		<field id="EffectArray_Value">	  <index>^NC5^</index><value>^Amount6^</value>			  		<condition id="ForWeaponNotIcon6"/></field>
+		<field id="EffectArray_Reference"><index>^NC5^</index><value>Effect,^Effect6^,^DamageBonus^</value>	<condition id="ForEffect6"/></field>
+		<field id="EffectArray_Operation"><index>^NC5^</index><value>^Operation^</value>		  		<condition id="ForEffect6"/></field>
+		<field id="EffectArray_Value">	  <index>^NC5^</index><value>^Amount6^</value>			  		<condition id="ForEffect6"/></field>
+		<field id="EffectArray_Reference"><index>^NC5^</index><value>Weapon,^Weapon6^,^Change^</value>	<condition id="ForWeaponIcon6"/></field>
+		<field id="EffectArray_Operation"><index>^NC5^</index><value>Set</value>		  				<condition id="ForWeaponIcon6"/></field>
+		<field id="EffectArray_Value">	  <index>^NC5^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon6"/></field>
+		<field id="EffectArray_Reference"><index>^NC5^</index><value>Weapon,^Weapon6^,^Change^</value>	<condition id="ForWeaponLevel6"/></field>
+		<field id="EffectArray_Operation"><index>^NC5^</index><value>^Operation^</value>				<condition id="ForWeaponLevel6"/></field>
+		<field id="EffectArray_Value">	  <index>^NC5^</index><value>^Amount6int^</value>			  	<condition id="ForWeaponLevel6"/></field>
+		<field id="EffectArray_Reference"><index>^NC5^</index><value>Unit,^Unit6^,^Change^</value>		<condition id="ForUnitInt6"/></field>
+		<field id="EffectArray_Operation"><index>^NC5^</index><value>^Operation^</value>		  		<condition id="ForUnitInt6"/></field>
+		<field id="EffectArray_Value">	  <index>^NC5^</index><value>^Amount6int^</value>			  	<condition id="ForUnitInt6"/></field>
+		<field id="EffectArray_Reference"><index>^NC5^</index><value>Actor,^Actor6^,^Change^</value>	<condition id="ForActor6"/></field>
+		<field id="EffectArray_Operation"><index>^NC5^</index><value>Set</value>		  				<condition id="ForActor6"/></field>
+		<field id="EffectArray_Value">	  <index>^NC5^</index><value>^ActorIcon^</value>			  	<condition id="ForActor6"/></field>
+	</entry>
+	<!--For NC6-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgID^</id>
+		<condition id="IsCreateUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^NC6^</index><value>Unit,^Unit7^,^Change^</value>		<condition id="ForUnit7"/></field>
+		<field id="EffectArray_Operation"><index>^NC6^</index><value>^Operation^</value>		  		<condition id="ForUnit7"/></field>
+		<field id="EffectArray_Value">	  <index>^NC6^</index><value>^Amount7^</value>			  		<condition id="ForUnit7"/></field>
+		<field id="EffectArray_Reference"><index>^NC6^</index><value>Weapon,^Weapon7^,^Change^</value>	<condition id="ForWeaponNotIcon7"/></field>
+		<field id="EffectArray_Operation"><index>^NC6^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon7"/></field>
+		<field id="EffectArray_Value">	  <index>^NC6^</index><value>^Amount7^</value>			  		<condition id="ForWeaponNotIcon7"/></field>
+		<field id="EffectArray_Reference"><index>^NC6^</index><value>Effect,^Effect7^,^DamageBonus^</value>	<condition id="ForEffect7"/></field>
+		<field id="EffectArray_Operation"><index>^NC6^</index><value>^Operation^</value>		  		<condition id="ForEffect7"/></field>
+		<field id="EffectArray_Value">	  <index>^NC6^</index><value>^Amount7^</value>			  		<condition id="ForEffect7"/></field>
+		<field id="EffectArray_Reference"><index>^NC6^</index><value>Weapon,^Weapon7^,^Change^</value>	<condition id="ForWeaponIcon7"/></field>
+		<field id="EffectArray_Operation"><index>^NC6^</index><value>Set</value>		  				<condition id="ForWeaponIcon7"/></field>
+		<field id="EffectArray_Value">	  <index>^NC6^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon7"/></field>
+		<field id="EffectArray_Reference"><index>^NC6^</index><value>Weapon,^Weapon7^,^Change^</value>	<condition id="ForWeaponLevel7"/></field>
+		<field id="EffectArray_Operation"><index>^NC6^</index><value>^Operation^</value>				<condition id="ForWeaponLevel7"/></field>
+		<field id="EffectArray_Value">	  <index>^NC6^</index><value>^Amount7int^</value>			  	<condition id="ForWeaponLevel7"/></field>
+		<field id="EffectArray_Reference"><index>^NC6^</index><value>Unit,^Unit7^,^Change^</value>		<condition id="ForUnitInt7"/></field>
+		<field id="EffectArray_Operation"><index>^NC6^</index><value>^Operation^</value>		  		<condition id="ForUnitInt7"/></field>
+		<field id="EffectArray_Value">	  <index>^NC6^</index><value>^Amount7int^</value>			  	<condition id="ForUnitInt7"/></field>
+		<field id="EffectArray_Reference"><index>^NC6^</index><value>Actor,^Actor7^,^Change^</value>	<condition id="ForActor7"/></field>
+		<field id="EffectArray_Operation"><index>^NC6^</index><value>Set</value>		  				<condition id="ForActor7"/></field>
+		<field id="EffectArray_Value">	  <index>^NC6^</index><value>^ActorIcon^</value>			  	<condition id="ForActor7"/></field>
+	</entry>
+	<!--For NC7-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgID^</id>
+		<condition id="IsCreateUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^NC7^</index><value>Unit,^Unit8^,^Change^</value>		<condition id="ForUnit8"/></field>
+		<field id="EffectArray_Operation"><index>^NC7^</index><value>^Operation^</value>		  		<condition id="ForUnit8"/></field>
+		<field id="EffectArray_Value">	  <index>^NC7^</index><value>^Amount8^</value>			  		<condition id="ForUnit8"/></field>
+		<field id="EffectArray_Reference"><index>^NC7^</index><value>Weapon,^Weapon8^,^Change^</value>	<condition id="ForWeaponNotIcon8"/></field>
+		<field id="EffectArray_Operation"><index>^NC7^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon8"/></field>
+		<field id="EffectArray_Value">	  <index>^NC7^</index><value>^Amount8^</value>			  		<condition id="ForWeaponNotIcon8"/></field>
+		<field id="EffectArray_Reference"><index>^NC7^</index><value>Effect,^Effect8^,^DamageBonus^</value>	<condition id="ForEffect8"/></field>
+		<field id="EffectArray_Operation"><index>^NC7^</index><value>^Operation^</value>		  		<condition id="ForEffect8"/></field>
+		<field id="EffectArray_Value">	  <index>^NC7^</index><value>^Amount8^</value>			  		<condition id="ForEffect8"/></field>
+		<field id="EffectArray_Reference"><index>^NC7^</index><value>Weapon,^Weapon8^,^Change^</value>	<condition id="ForWeaponIcon8"/></field>
+		<field id="EffectArray_Operation"><index>^NC7^</index><value>Set</value>		  				<condition id="ForWeaponIcon8"/></field>
+		<field id="EffectArray_Value">	  <index>^NC7^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon8"/></field>
+		<field id="EffectArray_Reference"><index>^NC7^</index><value>Weapon,^Weapon8^,^Change^</value>	<condition id="ForWeaponLevel8"/></field>
+		<field id="EffectArray_Operation"><index>^NC7^</index><value>^Operation^</value>				<condition id="ForWeaponLevel8"/></field>
+		<field id="EffectArray_Value">	  <index>^NC7^</index><value>^Amount8int^</value>			  	<condition id="ForWeaponLevel8"/></field>
+		<field id="EffectArray_Reference"><index>^NC7^</index><value>Unit,^Unit8^,^Change^</value>		<condition id="ForUnitInt8"/></field>
+		<field id="EffectArray_Operation"><index>^NC7^</index><value>^Operation^</value>		  		<condition id="ForUnitInt8"/></field>
+		<field id="EffectArray_Value">	  <index>^NC7^</index><value>^Amount8int^</value>			  	<condition id="ForUnitInt8"/></field>
+		<field id="EffectArray_Reference"><index>^NC7^</index><value>Actor,^Actor8^,^Change^</value>	<condition id="ForActor8"/></field>
+		<field id="EffectArray_Operation"><index>^NC7^</index><value>Set</value>		  				<condition id="ForActor8"/></field>
+		<field id="EffectArray_Value">	  <index>^NC7^</index><value>^ActorIcon^</value>			  	<condition id="ForActor8"/></field>
+	</entry>
+	<!--For NC8-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgID^</id>
+		<condition id="IsCreateUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^NC8^</index><value>Unit,^Unit9^,^Change^</value>		<condition id="ForUnit9"/></field>
+		<field id="EffectArray_Operation"><index>^NC8^</index><value>^Operation^</value>		  		<condition id="ForUnit9"/></field>
+		<field id="EffectArray_Value">	  <index>^NC8^</index><value>^Amount9^</value>			  		<condition id="ForUnit9"/></field>
+		<field id="EffectArray_Reference"><index>^NC8^</index><value>Weapon,^Weapon9^,^Change^</value>	<condition id="ForWeaponNotIcon9"/></field>
+		<field id="EffectArray_Operation"><index>^NC8^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon9"/></field>
+		<field id="EffectArray_Value">	  <index>^NC8^</index><value>^Amount9^</value>			  		<condition id="ForWeaponNotIcon9"/></field>
+		<field id="EffectArray_Reference"><index>^NC8^</index><value>Effect,^Effect9^,^DamageBonus^</value>	<condition id="ForEffect9"/></field>
+		<field id="EffectArray_Operation"><index>^NC8^</index><value>^Operation^</value>		  		<condition id="ForEffect9"/></field>
+		<field id="EffectArray_Value">	  <index>^NC8^</index><value>^Amount9^</value>			  		<condition id="ForEffect9"/></field>
+		<field id="EffectArray_Reference"><index>^NC8^</index><value>Weapon,^Weapon9^,^Change^</value>	<condition id="ForWeaponIcon9"/></field>
+		<field id="EffectArray_Operation"><index>^NC8^</index><value>Set</value>		  				<condition id="ForWeaponIcon9"/></field>
+		<field id="EffectArray_Value">	  <index>^NC8^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon9"/></field>
+		<field id="EffectArray_Reference"><index>^NC8^</index><value>Weapon,^Weapon9^,^Change^</value>	<condition id="ForWeaponLevel9"/></field>
+		<field id="EffectArray_Operation"><index>^NC8^</index><value>^Operation^</value>				<condition id="ForWeaponLevel9"/></field>
+		<field id="EffectArray_Value">	  <index>^NC8^</index><value>^Amount9int^</value>			  	<condition id="ForWeaponLevel9"/></field>
+		<field id="EffectArray_Reference"><index>^NC8^</index><value>Unit,^Unit9^,^Change^</value>		<condition id="ForUnitInt9"/></field>
+		<field id="EffectArray_Operation"><index>^NC8^</index><value>^Operation^</value>		  		<condition id="ForUnitInt9"/></field>
+		<field id="EffectArray_Value">	  <index>^NC8^</index><value>^Amount9int^</value>			  	<condition id="ForUnitInt9"/></field>
+		<field id="EffectArray_Reference"><index>^NC8^</index><value>Actor,^Actor9^,^Change^</value>	<condition id="ForActor9"/></field>
+		<field id="EffectArray_Operation"><index>^NC8^</index><value>Set</value>		  				<condition id="ForActor9"/></field>
+		<field id="EffectArray_Value">	  <index>^NC8^</index><value>^ActorIcon^</value>			  	<condition id="ForActor9"/></field>
+	</entry>
+	<!--For NC9-->
+	<entry catalog="Upgrade" type="CUpgrade">
+		<id>^UpgID^</id>
+		<condition id="IsCreateUpgrade"/>
+		<allowmodify/>
+		<field id="EffectArray_Reference"><index>^NC9^</index><value>Unit,^Unit10^,^Change^</value>		<condition id="ForUnit10"/></field>
+		<field id="EffectArray_Operation"><index>^NC9^</index><value>^Operation^</value>		  		<condition id="ForUnit10"/></field>
+		<field id="EffectArray_Value">	  <index>^NC9^</index><value>^Amount10^</value>			  		<condition id="ForUnit10"/></field>
+		<field id="EffectArray_Reference"><index>^NC9^</index><value>Weapon,^Weapon10^,^Change^</value>	<condition id="ForWeaponNotIcon10"/></field>
+		<field id="EffectArray_Operation"><index>^NC9^</index><value>^Operation^</value>		  		<condition id="ForWeaponNotIcon10"/></field>
+		<field id="EffectArray_Value">	  <index>^NC9^</index><value>^Amount10^</value>			  		<condition id="ForWeaponNotIcon10"/></field>
+		<field id="EffectArray_Reference"><index>^NC9^</index><value>Effect,^Effect10^,^DamageBonus^</value>	<condition id="ForEffect10"/></field>
+		<field id="EffectArray_Operation"><index>^NC9^</index><value>^Operation^</value>		  		<condition id="ForEffect10"/></field>
+		<field id="EffectArray_Value">	  <index>^NC9^</index><value>^Amount10^</value>			  		<condition id="ForEffect10"/></field>
+		<field id="EffectArray_Reference"><index>^NC9^</index><value>Weapon,^Weapon10^,^Change^</value>	<condition id="ForWeaponIcon10"/></field>
+		<field id="EffectArray_Operation"><index>^NC9^</index><value>Set</value>		  				<condition id="ForWeaponIcon10"/></field>
+		<field id="EffectArray_Value">	  <index>^NC9^</index><value>^WeaponIcon^</value>			  	<condition id="ForWeaponIcon10"/></field>
+		<field id="EffectArray_Reference"><index>^NC9^</index><value>Weapon,^Weapon10^,^Change^</value>	<condition id="ForWeaponLevel10"/></field>
+		<field id="EffectArray_Operation"><index>^NC9^</index><value>^Operation^</value>				<condition id="ForWeaponLevel10"/></field>
+		<field id="EffectArray_Value">	  <index>^NC9^</index><value>^Amount10int^</value>			  	<condition id="ForWeaponLevel10"/></field>
+		<field id="EffectArray_Reference"><index>^NC9^</index><value>Unit,^Unit10^,^Change^</value>		<condition id="ForUnitInt10"/></field>
+		<field id="EffectArray_Operation"><index>^NC9^</index><value>^Operation^</value>		  		<condition id="ForUnitInt10"/></field>
+		<field id="EffectArray_Value">	  <index>^NC9^</index><value>^Amount10int^</value>			  	<condition id="ForUnitInt10"/></field>
+		<field id="EffectArray_Reference"><index>^NC9^</index><value>Actor,^Actor10^,^Change^</value>	<condition id="ForActor10"/></field>
+		<field id="EffectArray_Operation"><index>^NC9^</index><value>Set</value>		  				<condition id="ForActor10"/></field>
+		<field id="EffectArray_Value">	  <index>^NC9^</index><value>^ActorIcon^</value>			  	<condition id="ForActor10"/></field>
+	</entry>
+
+
+
+
+
+
+
+	<!--Reset pseudo variables-->
+	<entry catalog="Unit" type="CUnit">
+        <id>CUnit</id>
+		<allowmodify/>
+       <field id="LifeArmor"><value>0</value></field>
+    </entry>
+
+
+</wizard>
+
+<!--
+Caveats:
+-This Wizard does not create new button. You might want to create a new button first and then run the wizard and pick it.
+-If you check to create a new requirement for when the Button should hide based on Max Level you will have to change the requirement's constant value if you change your mind with Max Level.
+-It is possible to add a Queue ability to a unit that already has one, creating an error. You would need to remove one of them from the unit's abilities.
+-Also, if the unit doesn't have a queue ability and you don't create one, the cancel button will not work. Cancel is tied to Queue abilities. You would have to add that Queue ability and then modify the command card's cancel command.
+-The upgrade cost increase only increase when the upg finish researching. Queued upgrade will not work great.
+
+-->

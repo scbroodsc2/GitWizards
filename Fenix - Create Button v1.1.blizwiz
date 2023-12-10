@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wizardfile>
+<wizard id="FenixCreateButton">
+    <name>Fenix - Create Button v1.1</name>
+    <objecttypes create="Button"/>
+   
+<!--Inputs-->
+    <input id="Page1Instructions1" type="WizardText">
+        <default value="This Wizard is used for creating a Button. Note: it has a little bug with ChargeText"/>
+        <color value="255,0,76,153"/>
+    </input>
+    <input id="ButtonName" type="CString">
+        <name>Button Name</name>
+    </input>
+    <input id="ButtonID" type="CString">
+        <name>Button ID</name>
+        <simpletext/>
+    </input>
+    <input id="ButtonIcon" type="CImagePath">
+        <name>Select icon for the Button</name>
+    </input>
+
+<!--Replaced with an explicit list
+
+    <input id="ButtonHotkey" type="CString">
+        <name>Write one character for setting the hotkey of the Button</name>
+        <tooltip>Make sure to only write one valid character. If a letter, write in it capital letter.</tooltip>
+        <simpletext/>
+    </input>
+-->
+
+    <input id="ButtonHotkey" type="WizardMenu">
+        <name>Choose Key</name>
+        <item text="None" value=""/>
+        <item text="A" value="A"/>
+        <item text="B" value="B"/>
+        <item text="C" value="C"/>
+        <item text="D" value="D"/>
+        <item text="E" value="E"/>
+        <item text="F" value="F"/>
+        <item text="G" value="G"/>
+        <item text="H" value="H"/>
+        <item text="I" value="I"/>
+        <item text="J" value="J"/>
+        <item text="K" value="K"/>
+        <item text="L" value="L"/>
+        <item text="M" value="M"/>
+        <item text="O" value="O"/>
+        <item text="P" value="P"/>
+        <item text="Q" value="Q"/>
+        <item text="R" value="R"/>
+        <item text="S" value="S"/>
+        <item text="T" value="T"/>
+        <item text="U" value="U"/>
+        <item text="V" value="V"/>
+        <item text="W" value="W"/>
+        <item text="X" value="X"/>
+        <item text="Y" value="Y"/>
+        <item text="Z" value="Z"/>
+        <item text="0" value="0"/>
+        <item text="1" value="1"/>
+        <item text="2" value="2"/>
+        <item text="3" value="3"/>
+        <item text="4" value="4"/>
+        <item text="5" value="5"/>
+        <item text="6" value="6"/>
+        <item text="7" value="7"/>
+        <item text="8" value="8"/>
+        <item text="9" value="9"/>
+        <item text="NumPad0" value="NumPad0"/>
+        <item text="NumPad1" value="NumPad1"/>
+        <item text="NumPad2" value="NumPad2"/>
+        <item text="NumPad3" value="NumPad3"/>
+        <item text="NumPad4" value="NumPad4"/>
+        <item text="NumPad5" value="NumPad5"/>
+        <item text="NumPad6" value="NumPad6"/>
+        <item text="NumPad7" value="NumPad7"/>
+        <item text="NumPad8" value="NumPad8"/>
+        <item text="NumPad9" value="NumPad9"/>
+        <item text="NumLock" value="NumLock"/>
+        <item text="NumPadDivide" value="NumPadDivide"/>
+        <item text="NumPadMultiply" value="NumPadMultiply"/>
+        <item text="NumPadMinus" value="NumPadMinus"/>
+        <item text="NumPadPlus" value="NumPadPlus"/>
+        <item text="F1" value="F1"/>
+        <item text="F2" value="F2"/>
+        <item text="F3" value="F3"/>
+        <item text="F4" value="F4"/>
+        <item text="F5" value="F5"/>
+        <item text="F6" value="F6"/>
+        <item text="F7" value="F7"/>
+        <item text="F8" value="F8"/>
+        <item text="F9" value="F9"/>
+        <item text="F10" value="F10"/>
+        <item text="F11" value="F11"/>
+        <item text="F12" value="F12"/>
+        <item text="Up" value="Up"/>
+        <item text="Down" value="Down"/>
+        <item text="Left" value="Left"/>
+        <item text="Right" value="Right"/>
+        <item text="Insert" value="Insert"/>
+        <item text="Delete" value="Delete"/>
+        <item text="Home" value="Home"/>
+        <item text="End" value="End"/>
+        <item text="PageUp" value="PageUp"/>
+        <item text="PageDown" value="PageDown"/>
+        <item text="Backspace" value="Backspace"/>
+        <item text="Enter" value="Enter"/>
+        <item text="CapsLock" value="CapsLock"/>
+        <item text="Apostrophe" value="Apostrophe"/>
+    </input>
+
+
+    <input id="ButtonTooltip" type="CStringLink">
+        <name>Write Button tooltip</name>
+        <tooltip>The Button tooltip is the text shown when you mouse over the button in the command card.</tooltip>
+    </input>
+
+
+<!--Entries-->
+    <entry catalog="Button" type="CButton">
+        <id>^ButtonID^</id>
+        <field id="Name">
+            <condition input="ButtonName" empty="0"/>
+            <value>^ButtonName^</value>
+        </field>
+        <field id="Name">
+            <condition input="ButtonName" empty="1"/>
+            <value>^ButtonID^</value>
+        </field>
+        <field id="Icon">
+            <condition input="ButtonIcon" empty="0"/>
+            <value>^ButtonIcon^</value>
+        </field>
+        <!--Indirect way of setting the hotkey using ChargeText to add a text entry to the default hotkey link and then reset the field to empty, the hotkey will stay linked to the text entry-->
+        <field id="EditorPrefix">
+            <condition input="ButtonHotkey" empty="0"/>
+            <stringid>Button/Hotkey/^ButtonID^</stringid>
+            <value>^ButtonHotkey^</value>
+        </field>
+        <field id="EditorPrefix">
+            <condition input="ButtonHotkey" empty="0"/>
+            <stringid>Button/EditorPrefix/##id##</stringid>
+            <value></value>
+        </field>
+        <field id="Tooltip">
+            <condition input="ButtonTooltip" empty="0"/>
+            <stringid>Button/Tooltip/^ButtonID^</stringid>
+            <value>^ButtonTooltip^</value>
+        </field>
+    </entry>
+
+    
+
+</wizard>
+
+</wizardfile>

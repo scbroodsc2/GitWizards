@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wizard id="FenixCreateWeapon">
+    <name>Fenix - Create a weapon v1.1</name>
+    <objecttypes create="Weapon"/>
+
+    <input id="Page1Instructions1" type="WizardText">
+        <default value="This Wizard is used for creating a weapon."/>
+        <color value="255,0,76,153"/>
+    </input>
+    
+<!--Conditions-->
+    <condition id="DirectSingle" logic="and">
+        <condition input="TargetType" value="0"/>
+        <condition input="DirectOrMissile" value="Direct"/>
+    </condition>
+    <condition  id="DirectSplash" logic="and">
+        <condition input="TargetType" value="1"/>
+        <condition input="DirectOrMissile" value="Direct"/>
+    </condition>
+    <condition id="DirectMultiSingle" logic="and">
+        <condition input="TargetType" value="2"/>
+        <condition input="DirectOrMissile" value="Direct"/>
+    </condition>
+    <condition id="DirectMultiSplash" logic="and">
+        <condition input="TargetType" value="3"/>
+        <condition input="DirectOrMissile" value="Direct"/>
+    </condition>
+    <condition id="MissileSingle" logic="and">
+        <condition input="TargetType" value="0"/>
+        <condition input="DirectOrMissile" value="Missile"/>
+    </condition>
+    <condition id="MissileSplash" logic="and">
+        <condition input="TargetType" value="1"/>
+        <condition input="DirectOrMissile" value="Missile"/>
+    </condition>
+    <condition id="MissileMultiSingle" logic="and">
+        <condition input="TargetType" value="2"/>
+        <condition input="DirectOrMissile" value="Missile"/>
+    </condition>
+    <condition id="MissileMultiSplash" logic="and">
+        <condition input="TargetType" value="3"/>
+        <condition input="DirectOrMissile" value="Missile"/>
+    </condition>
+
+    <condition id="MissileSingleOrSplash" logic="or">
+        <condition id="MissileSingle"/>
+        <condition id="MissileSplash"/>
+    </condition>
+    <condition id="DirectSingleOrSplash" logic="or">
+        <condition id="DirectSingle"/>
+        <condition id="DirectSplash"/>
+    </condition>
+    <condition id="DirectSplashOrMissileSplash" logic="or">
+            <condition id="DirectSplash"/>
+            <condition id="MissileSplash"/>
+    </condition>
+    <condition id="DirectSplashOrMissileSplashAndRadiusReduction" logic="and">
+        <condition id="DirectSplashOrMissileSplash"/>
+        <condition input="EffectSearchRadiusSplash" value="1"/>
+    </condition>
+    <condition id="DirectSplashOrMissileSplashAndNotRadiusReduction" logic="and">
+        <condition id="DirectSplashOrMissileSplash"/>
+        <condition input="EffectSearchRadiusSplash" value="0"/>
+    </condition>
+    <condition id="PhysicsNotZero" logic="not"><condition input="WeaponImpactPhysics" value="0"/></condition>
+
+
+<!--P1 Column 1-->
+    <input id="WeaponName" type="CString">
+        <name>Weapon Name</name>
+        <tooltip>Name of the weapon to modify</tooltip>
+    </input>
+    <input id="WeaponID" type="CString">
+        <name>Weapon ID</name>
+        <tooltip>ID of the weapon to modify</tooltip>
+        <simpletext/>
+    </input>    
+    <input id="AddToUnit" type="CUnitLink">
+        <name>Add Weapon to unit</name>
+        <tooltip>Add the weapon to a unit if you want</tooltip>
+    </input>
+    <input id="WeaponRange" type="CFixed">
+        <name>Range</name>
+        <tooltip>Range of the weapon</tooltip>
+    </input>
+    <input id="WeaponMinRange" type="CFixed">
+        <name>Minimum Range</name>
+        <tooltip>Minimum Range of the weapon</tooltip>
+    </input>
+    <input id="WeaponPeriod" type="CFixed">
+        <name>Period</name>
+        <tooltip>Period of the weapon</tooltip>
+    </input>
+    <input id="WeaponTargetFilters" type="WizardRadio">
+        <name>Can target</name>
+        <tooltip>Choose if the weapon can target ground or air or both. Note that if you want to create a "Splash" type with "Air and Ground" it would splash Air and Ground at the same time. Otherwise you would have to create 2 weapons, one for ground, one for air.</tooltip>
+        <item text="Only Ground" value="Ground" />
+        <item text="Only Air" value="Air" />
+        <item text="Air and Ground" value="-" />
+        <default value="Ground"/>
+    </input>
+    <input id="WeaponFlag1" type="WizardCheckbox">
+        <name>Display Cooldown</name>
+        <tooltip>This will display the cooldown of the weapon, like the Sieged Tank</tooltip>
+    </input>
+    <input id="WeaponIcon" type="CImagePath">
+        <name>Weapon Icon</name>
+        <tooltip>Choose the icon for your weapon</tooltip>
+        <default value="Assets\Textures\btn-missing-kaeo.dds"/>
+    </input>
+
+
+
+
+
+
+
+<!--P1 Column 2-->
+    <input id="Page1Instructions2" type="WizardText">
+        <default value="Choose what you want to create"/>
+        <color value="255,0,76,153"/>
+        <layout column="2"/>
+    </input>
+    <input id="DirectOrMissile" type="WizardRadio">
+        <name>Direct or Missile</name>
+        <tooltip>Direct is like the marine, the ghost, the tank, the immortal, it's instant damage.
+        
+Missile is like the marauder, the roach, the stalker, the banshee, it launches missiles that on impact deal damage.</tooltip>
+        <layout column="2"/>
+        <item text="Direct" value="Direct" />
+        <item text="Missile" value="Missile" />
+        <default value="Direct"/>
+    </input>    
+    <input id="TargetType" type="WizardRadio">
+        <name>Type of target</name>
+        <tooltip>Single Target: is like the marine, the ghost, the immortal, it targets a single unit and deals no splash.
+        
+Splash at Target: is like the Tank, the baneling, the ultralisk, it targets a single unit but deals splash to nearby other units.
+
+Multi Single Target: is like the Monolyth Fractal from Zeratul, it targets a group of units and single target damage to each of them.
+
+Multi Splash Target: is like the Taldarim immortal, it targets a group of units and deal splash damage at each of them.
+</tooltip>
+        <layout column="2"/>
+        <item text="Single Target" value="0" />
+        <item text="Splash at Target" value="1" /><!-- TEMPORARY REMOVAL OF THE MULTI CHOICES BECAUSE ITS NOT DONE
+        <item text="Multi Single Target" value="2" />
+        <item text="Multi Splash Target" value="3" />-->
+        <default value="0"/>
+    </input>  
+
+<!--P2 Column 1-->
+    <input id="Page2Instructions1" type="WizardText">
+        <default value="ART SECTION - DUPLICATE FROM:"/>
+        <color value="255,0,76,153"/>
+        <layout page="2"/>
+    </input>
+    <input id="Page2Instructions2" type="WizardText">
+        <default value="LAUNCH:"/>
+        <color value="255,255,0,0"/>
+        <layout page="2"/>
+    </input>
+    <input id="WeaponLaunchSound" type="CSoundLink">
+        <name>Launch Sound</name>
+        <tooltip>Choose the sound that is played when the unit start shooting</tooltip>
+        <layout page="2"/>
+    </input>
+    <input id="WeaponLaunchModel" type="CModelLink">
+        <name>Launch Model</name>
+        <tooltip>Choose the model that is played when the unit start shooting</tooltip>
+        <layout page="2"/>
+    </input>
+    <input id="Page2Instructions3" type="WizardText">
+        <default value="IMPACT:"/>
+        <color value="255,255,0,0"/>
+        <layout page="2"/>
+    </input>
+    <input id="WeaponImpactSound" type="CSoundLink">
+        <name>Impact Sound</name>
+        <tooltip>Choose the sound that is played at the impact</tooltip>
+        <layout page="2"/>
+    </input>
+    <input id="WeaponImpactModel" type="CModelLink">
+        <name>Impact Model</name>
+        <tooltip>Choose the model that is played at the impact</tooltip>
+        <layout page="2"/>
+    </input>
+    <input id="WeaponImpactPhysics" type="WizardRadio">
+        <name>Impact Physics</name>
+        <tooltip>Choose if the weapon creates physics impact. These are predefined, but you can tweak them after.</tooltip>
+        <layout page="2"/>
+        <item text="No physics" value="0" />
+        <item text="Small" value="1" />
+        <item text="Medium" value="2" />
+        <item text="Large" value="3" />
+        <default value="0"/>
+    </input>
+    <!--CopyPaste String-->
+    <input id="Page2Offset" type="WizardText">
+        <layout page="2" minheight="40"/>
+    </input>
+    <input id="Page2Instructions5" type="WizardText">
+        <default value="Use these strings to Copy Paste in the searches"/>
+        <tooltip>This will greatly make the model and sound searches faster</tooltip>
+        <color value="255,0,128,0"/>
+        <layout page="2"/>
+    </input>
+    <input id="Search1" type="CString">
+        <default value="launch"/>
+        <layout page="2"/>
+    </input>
+    <input id="Search2" type="CString">
+        <default value="impact"/>
+        <layout page="2"/>
+    </input>
+    <input id="Search3" type="CString">
+        <default value="missile"/>
+        <layout page="2"/>
+    </input>
+
+<!--P2 Column 2-->
+    <input id="Page2Instructions4" type="WizardText">
+        <default value="MISSILE:"/>
+        <condition input="DirectOrMissile" value="Missile"/>
+        <color value="255,255,0,0"/>
+        <layout page="2" column="2"/>
+    </input>
+    <input id="WeaponMissileModel" type="CModelLink">
+        <name>Missile Model</name>
+        <condition input="DirectOrMissile" value="Missile"/>
+        <tooltip>Choose the missile model</tooltip>
+        <layout page="2" column="2"/>
+    </input>
+    <input id="MissileMover" type="WizardRadio">
+        <name>Missile Mover</name>
+        <tooltip>Choose how the missile will travel. These are predefined, but you can tweak them after.</tooltip>
+        <condition input="DirectOrMissile" value="Missile"/>
+        <layout page="2" column="2"/>
+        <item text="Fast Direct" value="0" />
+        <item text="Slow Direct" value="1" />
+        <item text="Wave" value="2" />
+        <item text="Parabolic" value="3" />
+        <default value="0"/>
+    </input>
+
+<!--P3 Column 1-->
+    <input id="Page3Instructions1" type="WizardText">
+        <default value="EFFECTS SECTION:"/>
+        <color value="255,0,76,153"/>
+        <layout page="3"/>
+    </input>
+
+
+
+    <!--Effect tree text possibilities-->
+    <input id="Page3Possibility1" type="WizardText">
+        <default value="Weapon -> Damage"/>
+        <condition id="DirectSingle"/>
+        <color value="255,0,128,0"/>
+        <layout page="3"/>
+    </input>
+    <input id="Page3Possibility2" type="WizardText">
+        <default value="Weapon -> Search -> Damage"/>
+        <condition id="DirectSplash"/>
+        <color value="255,0,128,0"/>
+        <layout page="3"/>
+    </input>
+    <input id="Page3Possibility3" type="WizardText">
+        <default value="Weapon -> Persistent -> Damage"/>
+        <condition id="DirectMultiSingle"/>
+        <color value="255,0,128,0"/>
+        <layout page="3"/>
+    </input>
+    <input id="Page3Possibility4" type="WizardText">
+        <default value="Weapon -> Persistent -> Search -> Damage"/>
+        <condition id="DirectMultiSplash"/>
+        <color value="255,0,128,0"/>
+        <layout page="3"/>
+    </input>
+    <input id="Page3Possibility5" type="WizardText">
+        <default value="Weapon -> Launch Missile -> Damage"/>
+        <condition id="MissileSingle"/>
+        <color value="255,0,128,0"/>
+        <layout page="3"/>
+    </input>
+    <input id="Page3Possibility6" type="WizardText">
+        <default value="Weapon -> Launch Missile -> Search -> Damage"/>
+        <condition id="MissileSplash"/>
+        <color value="255,0,128,0"/>
+        <layout page="3"/>
+    </input>
+    <input id="Page3Possibility7" type="WizardText">
+        <default value="Weapon -> Persistent -> Launch Missile -> Damage"/>
+        <condition id="MissileMultiSingle"/>
+        <color value="255,0,128,0"/>
+        <layout page="3"/>
+    </input>
+    <input id="Page3Possibility8" type="WizardText">
+        <default value="Weapon -> Persistent -> Launch Missile -> Search -> Damage"/>
+        <condition id="MissileMultiSplash"/>
+        <color value="255,0,128,0"/>
+        <layout page="3"/>
+    </input>
+
+    <!--DAMAGE EFFECT-->
+    <input id="Page3Instructions2" type="WizardText">
+        <default value="DAMAGE EFFECT:"/>
+        <color value="255,255,0,0"/>
+        <layout page="3"/>
+    </input>
+    <input id="EffectDamageAmount" type="CFixed">
+        <name>Base Damage</name>
+        <tooltip>Base Damage applied to the target</tooltip>
+        <layout page="3"/>
+    </input>
+    <input id="EffectDamageKind" type="WizardRadio">
+        <name>Kind of damage</name>
+        <tooltip>This does not determine if it's ranged or not. It's for the target's data. For example, spell ignores armor.</tooltip>
+        <item text="Melee" value="Melee" />
+        <item text="Range" value="Range" />
+        <item text="Spell" value="Spell" />
+        <item text="Splash" value="Splash" />
+        <default value="Melee"/>
+        <layout page="3"/>
+    </input>
+    <input id="EffectDamageDeathTyped" type="WizardRadio">
+        <name>Type of death</name>
+        <tooltip>This will try to play a different death animation if the target has one. These are the most common ones, but more exist.</tooltip>
+        <item text="Normal" value="Normal" />
+        <item text="Blast" value="Blast" />
+        <item text="Evicerate" value="Evicerate" />
+        <item text="Disintegrate" value="Disintegrate" />
+        <item text="Fire" value="Fire" />
+        <default value="Normal"/>
+        <layout page="3"/>
+    </input>
+
+    <!--DAMAGE BONUS-->
+    <input id="Page3Instructions21" type="WizardText">
+        <default value="DAMAGE BONUS:"/>
+        <color value="255,255,0,0"/>
+        <layout page="3" column="2"/>
+    </input>
+    <input id="EffectDamageBonusArmored" type="CFixed">     <name>Bonus Armored</name>   <tooltip>Bonus Damage against Armored</tooltip>     <layout page="3" column="2"/></input>
+    <input id="EffectDamageBonusBiological" type="CFixed">  <name>Bonus Biological</name><tooltip>Bonus Damage against Biological</tooltip> <layout page="3" column="2"/></input>
+    <input id="EffectDamageBonusLight" type="CFixed">       <name>Bonus Light</name>     <tooltip>Bonus Damage against Light</tooltip>      <layout page="3" column="2"/></input>
+    <input id="EffectDamageBonusMassive" type="CFixed">     <name>Bonus Massive</name>   <tooltip>Bonus Damage against Massive</tooltip>    <layout page="3" column="2"/></input>
+    <input id="EffectDamageBonusMechanical" type="CFixed">  <name>Bonus Mechanical</name><tooltip>Bonus Damage against Mechanical</tooltip> <layout page="3" column="2"/></input>
+    <input id="EffectDamageBonusPsionic" type="CFixed">     <name>Bonus Psionic</name>   <tooltip>Bonus Damage against Psionic</tooltip>    <layout page="3" column="2"/></input>
+    <input id="EffectDamageBonusRobotic" type="CFixed">     <name>Bonus Robotic</name>   <tooltip>Bonus Damage against Robotic</tooltip>    <layout page="3" column="2"/></input>
+    <input id="EffectDamageBonusStructure" type="CFixed">   <name>Bonus Structure</name> <tooltip>Bonus Damage against Structure</tooltip>  <layout page="3" column="2"/></input>
+    <input id="EffectDamageBonusHeroic" type="CFixed">      <name>Bonus Heroic</name>    <tooltip>Bonus Damage against Heroic</tooltip>     <layout page="3" column="2"/></input>
+
+
+    <!--SEARCH EFFECT-->
+    <input id="Page3Instructions3" type="WizardText">
+        <default value="SEARCH EFFECT:"/>
+        <condition logic="or"><condition input="TargetType" value="1"/><condition input="TargetType" value="3"/></condition>
+        <color value="255,255,0,0"/>
+        <layout page="3"/>
+    </input>
+    <input id="EffectSearchRadius" type="CFixed">
+        <name>Effect Search Radius</name>
+        <tooltip>Search Radius that will then apply the Damage effect</tooltip>
+        <condition logic="or"><condition input="TargetType" value="1"/><condition input="TargetType" value="3"/></condition>
+        <layout page="3"/>
+    </input>
+    <input id="EffectSearchRadiusSplash" type="WizardCheckbox">
+        <name>Set radius splash damage with 100%, 75%, 50% and 25%.</name>
+        <tooltip>If unchecked, splash damage will be the same for all affected units.</tooltip>
+        <condition logic="or"><condition input="TargetType" value="1"/><condition input="TargetType" value="3"/></condition>
+        <layout page="3"/>
+    </input>
+    <input id="EffectSearchFriendlyFire" type="WizardCheckbox">
+        <name>Prevent Friendly Fire</name>
+        <tooltip>If checked, it will prevent splashing friendly units</tooltip>
+        <condition logic="or"><condition input="TargetType" value="1"/><condition input="TargetType" value="3"/></condition>
+        <layout page="3"/>
+    </input>
+    <macro id="Radius100">^EffectSearchRadius^</macro>
+    <macro id="Radius75">^EffectSearchRadius^ *0.75</macro>
+    <macro id="Radius50">^EffectSearchRadius^ *0.5</macro>
+    <macro id="Radius25">^EffectSearchRadius^ *0.25</macro>
+
+    <!--Armor Reduction-->
+    <input id="EffectDamageArmorReduction" type="CFixed">
+        <name>ArmorReduction</name>
+        <tooltip>Amount of damage blocked by each point of armor, default is 1.
+This can be useful for "Spell" weapons that are not affected by armor.</tooltip>
+        <default value="1"/>
+        <layout page="3"/>
+    </input>
+
+
+    <!--PERSISTENT EFFECT-->
+    <input id="Page3Instructions5" type="WizardText">
+        <default value="PERSISTENT EFFECT:"/>
+        <condition logic="or"><condition input="TargetType" value="2"/><condition input="TargetType" value="3"/></condition>
+        <color value="255,255,0,0"/>
+        <layout page="3"/>
+    </input>
+    <input id="EffectPersistentPeriodCount" type="CFixed">
+        <name>Effect Persistent Period Count</name>
+        <tooltip>Persistent that will repeat the effect tree. Used for launching multiple missiles.</tooltip>
+        <condition logic="or"><condition input="TargetType" value="2"/><condition input="TargetType" value="3"/></condition>
+        <layout page="3"/>
+    </input>
+    <input id="EffectPersistentPeriodDuration" type="CFixed">
+        <name>Effect Persistent Period Duration</name>
+        <tooltip>Delay between each period.</tooltip>
+        <condition logic="or"><condition input="TargetType" value="2"/><condition input="TargetType" value="3"/></condition>
+        <layout page="3"/>
+    </input>
+
+
+
+
+<!--ENTRY ENTRY ENTR ENTRY ENTR ENTRY ENTR ENTRY ENTR ENTRY ENTR ENTRY ENTRY-->
+<!--ENTRY ENTRY ENTR ENTRY ENTR ENTRY ENTR ENTRY ENTR ENTRY ENTR ENTRY ENTRY-->
+
+<!--Create/Duplicate the Launch Sound-->
+    <entry catalog="Sound" type="CSound">
+        <id>^WeaponID^LaunchSound</id>
+        <parentid>Combat</parentid>
+        <condition input="WeaponLaunchSound" empty="0"/>
+        <field id="AssetArray">
+            <value>ref=Sound,^WeaponLaunchSound^,AssetArray[^VALUEINDEX^]</value>
+            <count>30</count>
+        </field>
+    </entry>
+
+<!--Create/Duplicate the Impact Sound-->
+    <entry catalog="Sound" type="CSound">
+        <id>^WeaponID^ImpactSound</id>
+        <parentid>Combat</parentid>
+        <condition input="WeaponImpactSound" empty="0"/>
+        <field id="AssetArray">
+            <value>ref=Sound,^WeaponImpactSound^,AssetArray[^VALUEINDEX^]</value>
+            <count>30</count>
+        </field>
+    </entry>
+
+<!--Create/Duplicate the Launch Model-->
+    <entry catalog="Model" type="CModel">
+        <id>^WeaponID^LaunchModel</id>
+        <condition input="WeaponLaunchModel" empty="0"/>
+        <parentid>LaunchFX</parentid>
+        <field id="Model"><value>ref=Model,^WeaponLaunchModel^,Model</value></field>
+    </entry>
+
+<!--Create/Duplicate the Impact Model-->
+    <entry catalog="Model" type="CModel">
+        <id>^WeaponID^ImpactModel</id>
+        <condition input="WeaponImpactModel" empty="0"/>
+        <parentid>ImpactFX</parentid>
+        <field id="Model"><value>ref=Model,^WeaponImpactModel^,Model</value></field>
+    </entry>
+
+<!--Create/Duplicate the Missile Model-->
+    <entry catalog="Model" type="CModel">
+        <id>^WeaponID^MissileModel</id>
+        <condition input="WeaponMissileModel" empty="0"/>
+        <parentid>MissileFX</parentid>
+        <field id="Model"><value>ref=Model,^WeaponMissileModel^,Model</value></field>
+    </entry>
+
+<!--Creates the Force actors (physics)-->
+    <!--Horizontal force-->
+    <entry catalog="Actor" type="CActorForceSphere">
+        <id>^WeaponID^Force</id>
+        <condition logic="not"><condition input="WeaponImpactPhysics" value="0"/></condition>
+        <field id="HostSiteOps_Ops"><value>SOpIncomingDirectDot15</value></field>
+        <field id="On_Terms">   <index>0</index><value>Effect.^WeaponID^Damage; At Caster</value></field>
+        <field id="On_Send">    <index>0</index><value>Create</value></field>
+        <field id="On_Terms">   <index>1</index><value>ActorCreation</value></field>
+        <field id="On_Send">    <index>1</index><value>Create ^WeaponID^ForceUp</value></field>
+        <field id="Magnitude"><condition input="WeaponImpactPhysics" value="1"/><value>12,7</value></field>
+        <field id="Magnitude"><condition input="WeaponImpactPhysics" value="2"/><value>20,8</value></field>
+        <field id="Magnitude"><condition input="WeaponImpactPhysics" value="3"/><value>30,10</value></field>
+        <field id="Radius"><value>5</value></field>
+    </entry>
+
+    <!--Vertical force-->
+    <entry catalog="Actor" type="CActorForceSphere">
+        <id>^WeaponID^ForceUp</id>
+        <condition id="PhysicsNotZero"/>
+        <field id="Receiver_Subject"><value>::Main</value></field>
+        <field id="Field"><value>Directional</value></field>
+        <field id="Duration"><value>0.15</value></field>
+        <field id="Radius"><value>5</value></field>
+        <field id="Magnitude"><condition input="WeaponImpactPhysics" value="1"/><value>10,3</value></field>
+        <field id="Magnitude"><condition input="WeaponImpactPhysics" value="2"/><value>16,5</value></field>
+        <field id="Magnitude"><condition input="WeaponImpactPhysics" value="3"/><value>22,7</value></field>
+    </entry>
+
+
+<!--Create Effect Damage-->
+    <entry catalog="Effect" type="CEffectDamage">
+        <id>^WeaponID^Damage</id>
+        <parentid>DU_WEAP</parentid>
+        <field id="Name">   <value>^WeaponID^Damage</value></field>
+        <field id="Amount"> <value>^EffectDamageAmount^</value></field>
+        <field id="Kind">   <value>^EffectDamageKind^</value></field>
+        <field id="Death">  <value>^EffectDamageDeathTyped^</value></field>
+        <!--Damage Bonus-->
+        <field id="AttributeBonus"><index>0</index> <value>^EffectDamageBonusLight^</value></field>
+        <field id="AttributeBonus"><index>1</index> <value>^EffectDamageBonusArmored^</value></field>
+        <field id="AttributeBonus"><index>2</index> <value>^EffectDamageBonusBiological^</value></field>
+        <field id="AttributeBonus"><index>3</index> <value>^EffectDamageBonusMechanical^</value></field>
+        <field id="AttributeBonus"><index>4</index> <value>^EffectDamageBonusRobotic^</value></field>
+        <field id="AttributeBonus"><index>5</index> <value>^EffectDamageBonusPsionic^</value></field>
+        <field id="AttributeBonus"><index>6</index> <value>^EffectDamageBonusMassive^</value></field>
+        <field id="AttributeBonus"><index>7</index> <value>^EffectDamageBonusStructure^</value></field>
+        <field id="AttributeBonus"><index>9</index> <value>^EffectDamageBonusHeroic^</value></field>
+        <!--Armor Reduction-->
+        <field id="ArmorReduction"><value>^EffectDamageArmorReduction^</value></field>
+        <!--If splash and with radius reduction-->
+        <field id="AreaArray_Radius">   <index>0</index><value>^Radius25^</value>   <condition id="DirectSplashOrMissileSplashAndRadiusReduction"/></field>
+        <field id="AreaArray_Fraction"> <index>0</index><value>1</value>            <condition id="DirectSplashOrMissileSplashAndRadiusReduction"/></field>
+        <field id="AreaArray_Radius">   <index>1</index><value>^Radius50^</value>   <condition id="DirectSplashOrMissileSplashAndRadiusReduction"/></field>
+        <field id="AreaArray_Fraction"> <index>1</index><value>0.75</value>         <condition id="DirectSplashOrMissileSplashAndRadiusReduction"/></field>
+        <field id="AreaArray_Radius">   <index>2</index><value>^Radius75^</value>   <condition id="DirectSplashOrMissileSplashAndRadiusReduction"/></field>
+        <field id="AreaArray_Fraction"> <index>2</index><value>0.5</value>          <condition id="DirectSplashOrMissileSplashAndRadiusReduction"/></field>
+        <field id="AreaArray_Radius">   <index>3</index><value>^Radius100^</value>  <condition id="DirectSplashOrMissileSplashAndRadiusReduction"/></field>
+        <field id="AreaArray_Fraction"> <index>3</index><value>0.25</value>         <condition id="DirectSplashOrMissileSplashAndRadiusReduction"/></field>
+        <!--If splash with full damage-->
+        <field id="AreaArray_Radius">   <index>0</index><value>^Radius100^</value>  <condition id="DirectSplashOrMissileSplashAndNotRadiusReduction"/></field>
+        <field id="AreaArray_Fraction"> <index>0</index><value>1</value>            <condition id="DirectSplashOrMissileSplashAndNotRadiusReduction"/></field>
+        <field id="SearchFilters"><value>^WeaponTargetFilters^;Player,Ally,Missile,Stasis,Dead,Hidden,Invulnerable</value>  <condition input="EffectSearchFriendlyFire" value="1"/></field>
+        <field id="SearchFilters"><value>^WeaponTargetFilters^;Missile,Stasis,Dead,Hidden,Invulnerable</value>              <condition input="EffectSearchFriendlyFire" value="0"/></field>
+    </entry>
+
+<!--Create Weapon-->
+    <entry catalog="Weapon" type="CWeaponLegacy">
+        <id>^WeaponID^</id>
+        <field id="Name">       <value>^WeaponName^</value></field>
+        <field id="Period">     <value>^WeaponPeriod^</value></field>
+        <field id="Range">      <value>^WeaponRange^</value></field>
+        <field id="MinimumRange"><value>^WeaponMinRange^</value></field>
+        <field id="Icon">       <value>^WeaponIcon^</value></field>
+        <field id="DisplayEffect"><value>^WeaponID^Damage</value></field>
+        <field id="TargetFilters"><value>^WeaponTargetFilters^,Visible;Missile,Stasis,Dead,Hidden,Invulnerable</value></field>
+        <field id="Options"> <!--Display Cooldown-->
+            <condition input="WeaponFlag1" value="1"/>
+            <index>8</index>
+            <value>1</value>
+        </field>
+        <field id="Effect"><value>^WeaponID^Damage</value>          <condition id="DirectSingleOrSplash"/></field>
+        <field id="Effect"><value>^WeaponID^LaunchMissile</value>   <condition id="MissileSingleOrSplash"/></field>
+    </entry>
+
+<!--Modify the unit picked to add the weapon to it-->
+    <entry catalog="Unit" type="CUnit">
+        <id>^AddToUnit^</id>
+        <allowmodify/>
+        <condition input="AddToUnit" empty="0"/>
+        <field id="WeaponArray_Link">
+            <index>ref=Unit,^AddToUnit^,WeaponArray#</index>
+            <value>^WeaponID^</value>
+        </field>
+    </entry>
+
+<!--Create Action Actor for the weapon-->
+    <entry catalog="Actor" type="CActorAction">
+        <id>^WeaponID^Action</id>
+        <parentid>GenericAttack</parentid>
+        <field id="Name"><value>^WeaponID^Action</value></field>
+        <field id="LaunchAssets_Sound"><value>^WeaponID^LaunchSound</value></field>
+        <field id="LaunchAssets_Model"><value>^WeaponID^LaunchModel</value></field>
+        <field id="ImpactMap_Sound"><index>0</index><value>^WeaponID^ImpactSound</value></field>
+        <field id="ImpactMap_Model"><index>0</index><value>^WeaponID^ImpactModel</value></field>
+        <field id="ImpactPhysics_Name">     <condition id="PhysicsNotZero"/><value>^WeaponID^ImpactPhysics</value></field>
+        <field id="ImpactPhysics_MatchKeys"><condition id="PhysicsNotZero"/><value>Basic</value></field>
+        <field id="ImpactPhysics_Physics">  <condition id="PhysicsNotZero"/><value>^WeaponID^Force</value></field>
+        <token id="effectAttack"><value>^WeaponID^Damage</value>        <condition id="DirectSingleOrSplash"/></token>
+        <token id="effectImpact"><value>^WeaponID^Damage</value>        <condition id="MissileSingleOrSplash"/></token>
+        <token id="effectLaunch"><value>^WeaponID^LaunchMissile</value> <condition id="MissileSingleOrSplash"/></token>
+    </entry>
+
+
+<!--Missile related entries-->
+    <!--Creation of the mover for the missile unit-->
+    <entry catalog="Mover" type="CMoverMissile">
+        <id>^WeaponID^Missile</id>
+        <condition id="MissileSingleOrSplash"/>
+        <!--Fast Missile-->
+        <field id="MotionPhases_Driver">        <index>0</index><value>Guidance</value></field>
+        <field id="MotionPhases_Acceleration">  <index>0</index><value>3200</value></field>
+        <field id="MotionPhases_MaxSpeed">      <index>0</index><value>20</value></field>
+        <field id="MotionPhases_YawPitchRoll">  <index>0</index><value>MAX</value></field>
+    </entry>
+
+    <!--Creation of the missile Unit-->
+    <entry catalog="Unit" type="CUnit">
+        <id>^WeaponID^Weapon</id>
+        <condition id="MissileSingleOrSplash"/>
+        <parentid>MISSILE</parentid>
+        <field id="Name"><value>^WeaponName^ Projectile</value></field>
+        <!--   <field id="Prefix"><value>Weapon - </value></field>   NOT WORKING YET-->
+        <field id="Mover"><value>^WeaponID^Missile</value></field>
+    </entry>
+
+    <!--Creation of the actor for the missile Unit-->
+    <entry catalog="Actor" type="CActorMissile">
+        <id>^WeaponID^WeaponMissile</id>
+        <condition id="MissileSingleOrSplash"/>
+        <token id="unitName"><value>^WeaponID^Weapon</value></token>
+        <parentid>GenericAttackMissile</parentid>
+        <field id="Model"><value>^WeaponID^MissileModel</value></field>
+    </entry>
+
+    <!--Creation of the Launch Missile Effect-->
+    <entry catalog="Effect" type="CEffectLaunchMissile">
+        <id>^WeaponID^LaunchMissile</id>
+        <condition id="MissileSingleOrSplash"/>
+        <field id="AmmoUnit"><value>^WeaponID^Weapon</value></field>
+        <field id="ImpactEffect"><value>^WeaponID^Damage</value></field>
+    </entry>
+
+
+
+
+<!--P1 Column 4
+    <input id="CheckCreateRange" type="WizardCheckbox">
+        <name>Create Range Actor</name>
+        <tooltip>Create the range actor for the weapon</tooltip>
+        <layout column="4"/>
+    </input>-->
+ <!--This works, but since this is not using an ability or a unit selection like the tank or tempest, it's not associated to a weapon.
+    <entry catalog="Actor" type="CActorRange">
+        <condition input="CheckCreateRange" value="1" operator="equal"></condition>
+        <id>^WeaponName^Range</id>
+        <field id="Range">
+            <value>^WeaponRange^</value>
+        </field>
+        <field id="IconArcLength">
+            <value>3.25</value>
+        </field>
+        <field id="Icon">
+            <value>Assets\Textures\RadarIcon2.dds</value>
+        </field>
+
+        <field id="On_Terms">
+            <index>1</index>
+            <value>Abil.attack.TargetOn</value>
+        </field>
+        <field id="On_Send">
+            <index>1</index>
+            <value>Create</value>
+        </field>
+        <field id="On_Terms">
+            <index>2</index>
+            <value>Abil.attack.TargetOff</value>
+        </field>
+        <field id="On_Send">
+            <index>2</index>
+            <value>Destroy</value>
+        </field>
+        <field id="On_Terms">
+            <index>3</index>
+            <value>Abil.attack.ButtonHoverOn</value>
+        </field>
+        <field id="On_Send">
+            <index>3</index>
+            <value>Create</value>
+        </field>
+        <field id="On_Terms">
+            <index>4</index>
+            <value>Abil.attack.ButtonHoverOff</value>
+        </field>
+        <field id="On_Send">
+            <index>4</index>
+            <value>Destroy</value>
+        </field>
+    </entry>
+    -->
+
+
+
+
+
+</wizard>
