@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wizard id="FenixCreateWeapon">
-    <name>Fenix - Create a weapon v1.1</name>
+    <name>Fenix - Create a weapon v1.2</name>
     <objecttypes create="Weapon"/>
 
     <input id="Page1Instructions1" type="WizardText">
@@ -565,6 +565,7 @@ This can be useful for "Spell" weapons that are not affected by armor.</tooltip>
         <id>^WeaponID^Action</id>
         <parentid>GenericAttack</parentid>
         <field id="Name"><value>^WeaponID^Action</value></field>
+        <field id="Missile"><value>^WeaponID^WeaponMissile</value></field>
         <field id="LaunchAssets_Sound"><value>^WeaponID^LaunchSound</value></field>
         <field id="LaunchAssets_Model"><value>^WeaponID^LaunchModel</value></field>
         <field id="ImpactMap_Sound"><index>0</index><value>^WeaponID^ImpactSound</value></field>
