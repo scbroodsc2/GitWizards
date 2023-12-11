@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 
 <wizard id="FenixUpgrade">
-	<name>Fenix - Upgrade v1.0</name>
+	<name>Fenix - Upgrade v1.1</name>
 	<objecttypes create="Upgrade"/>
 <!--This wizard will create an upgrade for you or modify an existing one. You can only add values to the upgrades. If you need to remove a change, you'll have to edit the Upgrade.
 
@@ -1704,7 +1704,6 @@ Choose the Unit, the Weapon, the Effect or the main unit Actor.</tooltip>
         <id>^AddToUnitExistingResearch^</id>
         <allowmodify/>
 
-		<macro id="ResearchPlus1">^v_ResearchArraySlot^+1</macro>
         <!--Add the Execute Button to the Command Card-->
         <field id="CardLayouts_LayoutButtons_Face"><index>^DummyButtonCountEX^</index><value>^ResearchButton^</value></field>
             <!--Modify the Execute Button-->
@@ -1712,7 +1711,7 @@ Choose the Unit, the Weapon, the Effect or the main unit Actor.</tooltip>
             <field id="CardLayouts_LayoutButtons_Row">		<index>^DummyButtonCountEX^</index><value>^CCRow^</value></field>
             <field id="CardLayouts_LayoutButtons_Column">	<index>^DummyButtonCountEX^</index><value>^CCColumn^</value></field>
 			<!--Set the AbilityCommand-->
-			<field id="CardLayouts_LayoutButtons_AbilCmd"><index>^DummyButtonCountEX^</index><value>^ResearchLink^,Research^ResearchPlus1^</value></field>
+			<field id="CardLayouts_LayoutButtons_AbilCmd"><index>^DummyButtonCountEX^</index><value>^ResearchLink^,Research^v_ResearchArraySlotPlus1^</value></field>
 
 
         <!--Add the Cancel Button to the Command Card-->
