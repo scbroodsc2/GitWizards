@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <wizard id="FenixRequirement">
-    <name>Fenix - Requirement v1.0</name>
+    <name>Fenix - Requirement v1.1</name>
     <objecttypes create="Requirement" load="Upgrade"/>
 
 
@@ -236,7 +236,7 @@ NOTE: If the ability already have a requirement, this will replace it. For examp
 		<field id="NodeArray_Link"> <!--Adds the Show Requirement-->
 			<index>1</index>
 			<condition id="LearnOnlyOrLearnAndUseAndUpgID"/>
-			<value>LTCountUpgrade^UpgID^QueuedOrBetter^MaxLevelMinusOne^</value>
+			<value>LTECountUpgrade^UpgID^QueuedOrBetter^MaxLevelMinusOne^</value>
 		</field>
 	</entry>
 
@@ -251,12 +251,16 @@ NOTE: If the ability already have a requirement, this will replace it. For examp
 		<field id="Count_Link">
 			<value>^UpgID^</value>
 		</field>
+		<field id="Flags">
+			<index>0</index>
+			<value>0</value>
+		</field>
 		<allowmodify/>
 	</entry>
 	<entry catalog="RequirementNode" type="CRequirementLTE">
-		<id>LTCountUpgrade^UpgID^QueuedOrBetter^MaxLevelMinusOne^</id>
+		<id>LTECountUpgrade^UpgID^QueuedOrBetter^MaxLevelMinusOne^</id>
 		<condition id="LearnOnlyOrLearnAndUseAndUpgID"/>
-		<name>LTCountUpgrade^UpgID^QueuedOrBetter^MaxLevelMinusOne^</name>
+		<name>LTECountUpgrade^UpgID^QueuedOrBetter^MaxLevelMinusOne^</name>
 		<field id="OperandArray">
 			<index>0</index>
 			<value>CountUpgrade^UpgID^QueuedOrBetter</value>
@@ -267,7 +271,15 @@ NOTE: If the ability already have a requirement, this will replace it. For examp
 		</field>
 		<allowmodify/>
 	</entry>
-
+	<entry catalog="RequirementNode" type="CRequirementConst">
+		<id>^MaxLevelMinusOne^</id>
+		<condition id="LearnOnlyOrLearnAndUseAndUpgID"/>
+		<name>^MaxLevelMinusOne^</name>
+		<field id="Value">
+			<value>^MaxLevelMinusOne^</value>
+		</field>
+		<allowmodify/>
+	</entry>
 
 <!--Create the USE requirement to hide the button when MaxLevel is reached-->   
 	<!--Node index 0 for Use, 1 for Show-->
